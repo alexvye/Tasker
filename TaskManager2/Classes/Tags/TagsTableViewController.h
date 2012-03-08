@@ -13,13 +13,16 @@
 	UITableView* dataTable;
     UIBarButtonItem* editTableButton;
     UIBarButtonItem* saveTableButton;
+    NSArray* tags;
 }
 
 @property(nonatomic, retain) IBOutlet UITableView* dataTable;
 @property(nonatomic, retain) UIBarButtonItem* editTableButton;
 @property(nonatomic, retain) UIBarButtonItem* saveTableButton;
+@property(nonatomic, retain) NSArray* tags;
 
 -(IBAction)editButtonPressed:(UIButton*)aButton;
 -(IBAction)saveButtonPressed:(UIButton*)aButton;
+-(void)loadTags;
 
 @end

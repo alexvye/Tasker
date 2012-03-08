@@ -16,8 +16,6 @@
 }
 
 +(double)getStatusFromStartDate:(NSDate*)startDate EndDate:(NSDate*)endDate;
-//+(NSMutableArray*)getSelectedTasks;
-+(NSMutableArray*)getSelectedTags;
 +(void)saveData;
 +(void)loadData;
 

@@ -10,9 +10,6 @@
 #import "Task.h"
 #import "TaskDAO.h"
 
-//static NSMutableArray* Tasks = nil;
-static NSMutableArray* Tags = nil;
-
 @implementation DataManager
 
 +(double)getStatusFromStartDate:(NSDate*)startDate EndDate:(NSDate*)endDate {
@@ -32,36 +29,13 @@ static NSMutableArray* Tags = nil;
 // single point for saving application data
 //
 +(void)saveData {
-	//
-	// TODO put Peter's stuff here
-	//
 }
 
 //
 // single point for loading application data
 //
 +(void)loadData {
-	//
-	// TODO put Peter's stuff here
-	//
-	
-	//
-	// TEMP hardcode init instead of load
-	//
 	[TaskDAO databaseSetup];
-//	Tasks = [[TaskDAO getAllTasks] mutableCopy];
-	Tags = [[TaskDAO getAllTags] mutableCopy];
-}
-
-//
-//
-//
-//+(NSMutableArray*)getSelectedTasks {
-//	return Tasks;
-//}
-
-+(NSMutableArray*)getSelectedTags {
-	return Tags;
 }
 
 @end

@@ -13,6 +13,7 @@
 
 @implementation TagsTableViewController
 @synthesize dataTable;
+@synthesize tags;
 @synthesize editTableButton;
 @synthesize saveTableButton;
 
@@ -67,6 +68,8 @@
 	 // Pass the selected object to the new view controller.
 	 //
 	 [self presentModalViewController:tagsAddView animated:YES];
+     
+     self.tags = nil;
  }
 
 
@@ -83,10 +86,16 @@
     return 1;
 }
 
+-(void)loadTags {
+    if (self.tags == nil) {
+        self.tags = [TaskDAO getAllTags];
+    }
+}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     // Return the number of rows in the section.
-    return [[DataManager getSelectedTags] count];
+    [self loadTags];
+    return [self.tags count];
 }
 
 
@@ -101,7 +110,8 @@
     }
     
     // Configure the cell...
-    [[cell textLabel] setText:(NSString*) [[DataManager getSelectedTags] objectAtIndex:[indexPath row]]];
+    [self loadTags];
+    [[cell textLabel] setText:(NSString*) [self.tags objectAtIndex:[indexPath row]]];
     [cell.textLabel setBackgroundColor:[UIColor clearColor]];
 		
 	//
@@ -112,7 +122,7 @@
 	//
 	UIImage *rowBackground;
 	UIImage *selectionBackground;
-	NSInteger sectionRows = [[DataManager getSelectedTags] count];
+	NSInteger sectionRows = [self.tags count];
 	NSInteger row = [indexPath row];
 	if (row == 0 && row == sectionRows - 1) {
 		rowBackground = [UIImage imageNamed:@"topAndBottomRow.png"];
@@ -141,8 +151,10 @@
 // Override to support editing the table view.
 //
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-	[TaskDAO removeTag:[[DataManager getSelectedTags] objectAtIndex:indexPath.row]];
-	[[DataManager getSelectedTags] removeObjectAtIndex:[indexPath row]];
+    [self loadTags];
+	[TaskDAO removeTag:[self.tags objectAtIndex:indexPath.row]];
+    self.tags = nil;
+    [self loadTags];
 	[self.dataTable reloadData]; 
 }
 
@@ -172,6 +184,7 @@
     [super didReceiveMemoryWarning];
     
     // Relinquish ownership any cached data, images, etc that aren't in use.
+    self.tags = nil;
 }
 
 - (void)viewDidUnload {
@@ -182,6 +195,7 @@
 
 - (void)dealloc {
 	[dataTable release];
+    [tags release];
     [editTableButton release];
     [saveTableButton release];
     [super dealloc];

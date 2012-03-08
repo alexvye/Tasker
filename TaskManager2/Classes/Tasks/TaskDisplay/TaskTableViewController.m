@@ -27,6 +27,7 @@
 @synthesize dataTable;
 @synthesize toolbar;
 @synthesize tasks;
+@synthesize tags;
 @synthesize parentId;
 @synthesize parentSystemId;
 @synthesize filter;
@@ -176,6 +177,12 @@
     [self saveState];
 }
 
+- (void)setupTags {
+    if (self.tags == nil) {
+        self.tags = [[TaskDAO getAllTags] autorelease];
+    }
+}
+
 #pragma mark - Action Sheet Methods
 
 //
@@ -193,7 +200,8 @@
     //
     // loop and add all the tags to the action sheet
     //
-	for(NSString* tag in [DataManager getSelectedTags]) {
+    [self setupTags];
+	for(NSString* tag in self.tags) {
 		[popupQuery addButtonWithTitle:tag];
 	}
 	
@@ -214,9 +222,10 @@
 // This method is called when you click an item on the action item
 //
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    [self setupTags];
     if ([actionSheet.title isEqualToString:@"Please select the tag to filter by"]) {
-        if (buttonIndex < [[DataManager getSelectedTags] count]) {
-            filter = [[DataManager getSelectedTags] objectAtIndex:buttonIndex]; 
+        if (buttonIndex < [self.tags count]) {
+            filter = [self.tags objectAtIndex:buttonIndex]; 
         } else {
             filter = nil;
         }
@@ -521,6 +530,7 @@
     
     // Relinquish ownership any cached data, images, etc that aren't in use.
     self.tasks = nil;
+    self.tags = nil;
 }
 
 
@@ -531,6 +541,7 @@
     [saveTableButton release];
     [filterTableButton release];
     [tasks release];
+    [tags release];
     [parentSystemId release];
     [filter release];
     [super dealloc];

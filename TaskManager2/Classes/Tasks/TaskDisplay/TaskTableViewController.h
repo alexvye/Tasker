@@ -16,6 +16,7 @@
     UIBarButtonItem* saveTableButton;
     UIBarButtonItem* filterTableButton;
     NSMutableArray* tasks;
+    NSArray* tags;
 	int parentId;
 	NSString* parentSystemId;
     NSString* filter;
@@ -28,6 +29,7 @@
 @property(nonatomic, retain) UIBarButtonItem* saveTableButton;
 @property(nonatomic, retain) UIBarButtonItem* filterTableButton;
 @property(nonatomic, retain) NSMutableArray* tasks;
+@property(nonatomic, retain) NSArray* tags;
 @property(nonatomic, assign) int parentId;
 @property(nonatomic, retain) NSString* parentSystemId;
 @property(nonatomic, retain) NSString* filter;
@@ -40,5 +42,6 @@
 - (IBAction)addStatusFilter:(UIButton*)aButton;
 - (void)popupActionSheet;
 - (void)setupFilteredTasks;
+- (void)setupTags;
 
 @end
