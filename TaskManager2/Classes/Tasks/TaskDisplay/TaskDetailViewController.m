@@ -361,7 +361,7 @@
 
             NSDateFormatter *timeFormatter = [[[NSDateFormatter alloc] init] autorelease];
             [timeFormatter setDateStyle:NSDateFormatterNoStyle];
-            [timeFormatter setTimeStyle:NSDateFormatterMediumStyle];
+            [timeFormatter setTimeStyle:NSDateFormatterShortStyle];
             
             cell.textLabel.text = @"Alert";
             cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ",

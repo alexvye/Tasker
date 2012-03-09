@@ -248,7 +248,7 @@
                 cell.detailTextLabel.text = @"Not set";
             } else {
                 NSDateFormatter *format = [[[NSDateFormatter alloc] init] autorelease];
-                [format setDateFormat:@"HH:mm"];	
+                [format setTimeStyle:NSDateFormatterShortStyle];
                 cell.detailTextLabel.text = [format stringFromDate:self.alarmDate];
             }
 		} else if (indexPath.section == 3) {
