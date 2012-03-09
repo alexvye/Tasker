@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+#define TASK_STATUS_ALL     2
+
 
 @interface TaskTableViewController : UIViewController<UITableViewDataSource, UIActionSheetDelegate> {
 	UITableView* dataTable;
@@ -16,7 +18,7 @@
     UIBarButtonItem* saveTableButton;
     UIBarButtonItem* filterTableButton;
     UIBarButtonItem *flexible;
-    NSMutableArray* tasks;
+    NSArray* tasks;
     NSArray* tags;
 	int parentId;
 	NSString* parentSystemId;
@@ -30,7 +32,7 @@
 @property(nonatomic, retain) UIBarButtonItem* saveTableButton;
 @property(nonatomic, retain) UIBarButtonItem* filterTableButton;
 @property(nonatomic, retain) UIBarButtonItem* flexible;
-@property(nonatomic, retain) NSMutableArray* tasks;
+@property(nonatomic, retain) NSArray* tasks;
 @property(nonatomic, retain) NSArray* tags;
 @property(nonatomic, assign) int parentId;
 @property(nonatomic, retain) NSString* parentSystemId;

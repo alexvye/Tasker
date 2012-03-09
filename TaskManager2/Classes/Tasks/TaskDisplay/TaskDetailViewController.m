@@ -370,7 +370,7 @@
 //            static NSString *SectionsTableIdentifier = @"TaskDetailsCell";
 //            cell = [tableView dequeueReusableCellWithIdentifier:SectionsTableIdentifier];
             if (cell == nil) {
-                cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil];
+                cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil] autorelease];
             }
 
             if ([indexPath row] == 0) {
@@ -385,11 +385,11 @@
         static NSString* SectionsTableIdentifier = @"TaskCompleteCell";
         cell = [tableView dequeueReusableCellWithIdentifier:SectionsTableIdentifier];
         if (cell == nil) {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:SectionsTableIdentifier];
+            cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:SectionsTableIdentifier] autorelease];
             cell.textLabel.text = @"Task Completed";
 
             CGRect frame = CGRectMake(198.0, 17.0, 94.0, 27.0);
-            UISwitch* switchCtl = [[UISwitch alloc] initWithFrame:frame];
+            UISwitch* switchCtl = [[[UISwitch alloc] initWithFrame:frame] autorelease];
             [switchCtl addTarget:self action:@selector(taskCompleted:) forControlEvents:UIControlEventValueChanged];
 
             // in case the parent view draws with a custom color or gradient, use a transparent color

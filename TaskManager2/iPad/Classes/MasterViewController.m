@@ -93,7 +93,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSArray* tasks = [[TaskDAO getAllChildTasks:self.parentTaskId :self.parentSystemId] autorelease];
+    NSArray* tasks = [TaskDAO getAllChildTasks:self.parentTaskId :self.parentSystemId];
     return [tasks count];
 }
 

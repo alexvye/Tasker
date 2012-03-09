@@ -45,7 +45,7 @@
 }
 
 - (IBAction)donePressed:(id)sender {
-    NSMutableArray* newTagList = [[NSMutableArray alloc] initWithCapacity:[tags count]];
+    NSMutableArray* newTagList = [[[NSMutableArray alloc] initWithCapacity:self.tags.count] autorelease];
     for (UITableViewCell* cell in [self.dataTable visibleCells]) {
         if (cell.accessoryType == UITableViewCellAccessoryCheckmark) {
             NSIndexPath* indexPath = [self.dataTable indexPathForCell:cell];
@@ -88,7 +88,7 @@
 	static NSString *modifyTaskCell = @"ModifyTaskCell";
 	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:modifyTaskCell];
 	if (cell == nil) {
-		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:modifyTaskCell];
+		cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:modifyTaskCell] autorelease];
 	}
 
 	NSString* tag = [tags objectAtIndex:[indexPath row]];

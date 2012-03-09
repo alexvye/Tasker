@@ -120,7 +120,7 @@
 	static NSString *repeatDaysCell = @"ModifyRepeatDaysCell";
 	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:repeatDaysCell];
 	if (cell == nil) {
-		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:repeatDaysCell];
+		cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:repeatDaysCell] autorelease];
 	}
 	
 	if (self.repeatType == DAILY) {

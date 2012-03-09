@@ -159,7 +159,7 @@
 		frame.origin.y = 0;
 		frame.size.height = 50;
 		frame.size.width = 320;
-		cell = [[DateViewCell alloc] initWithFrame:frame];
+		cell = [[[DateViewCell alloc] initWithFrame:frame] autorelease];
 	}
 
 	// Set the date object in the cell.

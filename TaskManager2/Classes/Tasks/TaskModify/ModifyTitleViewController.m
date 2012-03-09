@@ -102,10 +102,10 @@
 		frame.size.height = 50;
 		frame.size.width = 320;
 		if (indexPath.row == 0) {
-			cell = [[EnterDataCellView alloc] initWithFrame:frame type:@"Title" value:self.taskTitle];
+			cell = [[[EnterDataCellView alloc] initWithFrame:frame type:@"Title" value:self.taskTitle] autorelease];
 			[[(EnterDataCellView*)cell dataField] becomeFirstResponder];
 		} else {
-			cell = [[EnterDataCellView alloc] initWithFrame:frame type:@"Description" value:self.taskDescription];
+			cell = [[[EnterDataCellView alloc] initWithFrame:frame type:@"Description" value:self.taskDescription] autorelease];
 		}
 	}
 

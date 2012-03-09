@@ -152,26 +152,24 @@
 }
 
 - (void) setupFilteredTasks {
-    NSArray *tmpTasks = [TaskDAO getAllChildTasks:self.parentId :self.parentSystemId];
-    if (filter != nil) {
-        self.tasks = [[[NSMutableArray alloc] init] autorelease];
-        for (Task *task in tmpTasks) {
-            if ([[task tags] containsObject:filter]) {
-                [self.tasks addObject:task];
-            }
-        }
+    // Get all tasks for the status filter
+    NSArray* tmpTasks;
+    if (self.statusFilter == TASK_STATUS_ALL) {
+        tmpTasks = [TaskDAO getAllChildTasks:self.parentId :self.parentSystemId];
     } else {
-        self.tasks = [[tmpTasks mutableCopy] autorelease];
+        tmpTasks = [TaskDAO getAllChildTasks:self.parentId :self.parentSystemId :self.statusFilter];
     }
     
-    if (self.statusFilter != 2) {
-        NSMutableArray* filteredTasks = [[[NSMutableArray alloc] init] autorelease];
-        for (Task* task in self.tasks) {
-            if (self.statusFilter == task.status) {
-                [filteredTasks addObject:task];
+    if (filter == nil) {
+        self.tasks = tmpTasks;
+    } else {
+        NSMutableArray* postFilteredTasks = [[[NSMutableArray alloc] init] autorelease];
+        for (Task *task in tmpTasks) {
+            if ([task.tags containsObject:filter]) {
+                [postFilteredTasks addObject:task];
             }
         }
-        self.tasks = filteredTasks;
+        self.tasks = postFilteredTasks;
     }
     
     [self saveState];
@@ -179,7 +177,7 @@
 
 - (void)setupTags {
     if (self.tags == nil) {
-        self.tags = [[TaskDAO getAllTags] autorelease];
+        self.tags = [TaskDAO getAllTags];
     }
 }
 
@@ -210,9 +208,8 @@
     //
 	[popupQuery addButtonWithTitle:@"All"];
 	
-    UIView *viewBase = self.view;
     TaskManager2AppDelegate* delegate = [[UIApplication sharedApplication] delegate];
-    viewBase = [delegate.tabBarController view];
+    UIView* viewBase = [delegate.tabBarController view];
 
     [popupQuery showInView:viewBase];  
     [popupQuery release];  
@@ -414,7 +411,7 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
 	Task* task = [self.tasks objectAtIndex:indexPath.row];
 	[TaskDAO deleteTask:task.taskId :task.systemId];
-	[self.tasks removeObjectAtIndex:[indexPath row]];
+	self.tasks = nil;
 	[self.dataTable reloadData]; 
 }
 
@@ -422,17 +419,19 @@
 // Override to support rearranging the table view.
 //
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-    if (toIndexPath.row != [self.tasks count]) {
+
+    if (toIndexPath.row >= 0 && toIndexPath.row < self.tasks.count) {
         int from = fromIndexPath.row;
         int to   = toIndexPath.row;
         if (from == to) {
+            // Moved to same location, return.
             return;
         }
         
         // Get indexes from the full list based.
         NSMutableArray* fullList = nil;
         if (self.filter == nil && self.statusFilter == 2) {
-            fullList = self.tasks;
+            fullList = [[self.tasks mutableCopy] autorelease];
         } else {
             // Get tasks from merged list.
             Task* fromTask = [self.tasks objectAtIndex:from];
@@ -464,12 +463,13 @@
             [TaskDAO updateTaskPriority:task.taskId :task.systemId :i];
         }
     }
-
+/*
     if (self.filter != nil || self.statusFilter != 2) {
-        self.tasks = [[TaskDAO getAllChildTasks:self.parentId :self.parentSystemId] mutableCopy];
         [self setupFilteredTasks];
     }
-    
+*/
+    self.tasks = nil;
+
 	[self.dataTable reloadData];
 }
 

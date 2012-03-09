@@ -79,7 +79,7 @@
 	static NSString *modifyRepeatType = @"ModifyRepeatTypeCell";
 	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:modifyRepeatType];
 	if (cell == nil) {
-		cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:modifyRepeatType];
+		cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:modifyRepeatType] autorelease];
 	}
 
 	NSArray* list = [[[NSArray alloc] initWithObjects:@"None",@"Daily",@"Weekly",@"Monthly",nil] autorelease];

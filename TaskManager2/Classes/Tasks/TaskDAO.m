@@ -518,7 +518,7 @@ static NSString* fileName = nil;
  * This method is used to return all the tags for a specific task.
  */
 +(NSArray*) getTagsForTask:(int) taskId :(NSString*) systemId {
-	NSMutableArray* tags = [[NSMutableArray alloc] init];
+	NSMutableArray* tags = [[[NSMutableArray alloc] init] autorelease];
 	
 	// Open the database.
 	sqlite3* database;
@@ -544,7 +544,7 @@ static NSString* fileName = nil;
 	}
 	sqlite3_finalize(statement);
 	
-	return [tags autorelease];
+	return tags;
 }
 
 /**
@@ -661,7 +661,7 @@ static NSString* fileName = nil;
  * This method is used to return all the tags.
  */
 +(NSArray*) getAllTags {
-	NSMutableArray* tags = [[NSMutableArray alloc] init];
+	NSMutableArray* tags = [[[NSMutableArray alloc] init] autorelease];
 	
 	// Open the database.
 	sqlite3* database;
@@ -683,7 +683,7 @@ static NSString* fileName = nil;
 	}
 	sqlite3_finalize(statement);
 	
-	return [tags autorelease];
+	return tags;
 }
 
 /**

@@ -24,13 +24,13 @@
 - (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
 	if (self != nil) {
-		self.cellLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 10, 77, 21)];
+		self.cellLabel = [[[UILabel alloc] initWithFrame:CGRectMake(20, 10, 77, 21)] autorelease];
 		self.cellLabel.textAlignment = UITextAlignmentLeft;
 		self.cellLabel.backgroundColor = [UIColor clearColor];
 		self.cellLabel.highlightedTextColor = [UIColor whiteColor];
 		self.cellLabel.font = [UIFont fontWithName:@"Helvetica-Bold" size:17];
 
-		self.cellDate = [[UILabel alloc] initWithFrame:CGRectMake(88, 10, 192, 21)];
+		self.cellDate = [[[UILabel alloc] initWithFrame:CGRectMake(88, 10, 192, 21)] autorelease];
 		self.cellDate.textAlignment = UITextAlignmentRight;
 		self.cellDate.backgroundColor = [UIColor clearColor];
 		self.cellDate.highlightedTextColor = [UIColor whiteColor];

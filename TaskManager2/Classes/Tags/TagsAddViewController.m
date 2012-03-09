@@ -99,7 +99,7 @@
 	EnterDataCellView* cell = (EnterDataCellView*)
 		[tableView dequeueReusableCellWithIdentifier:tagAddCell];
 	if (cell == nil) {
-		cell = [[EnterDataCellView alloc] initWithFrame:self.view.bounds type:@"Tag" value:nil];
+		cell = [[[EnterDataCellView alloc] initWithFrame:self.view.bounds type:@"Tag" value:nil] autorelease];
 	}
 
 	if (!self.newTagFlag) {
