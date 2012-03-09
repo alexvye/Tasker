@@ -26,15 +26,15 @@
 @implementation TaskTableViewController
 @synthesize dataTable;
 @synthesize toolbar;
+@synthesize editTableButton;
+@synthesize saveTableButton;
+@synthesize filterTableButton;
 @synthesize tasks;
 @synthesize tags;
 @synthesize parentId;
 @synthesize parentSystemId;
 @synthesize filter;
 @synthesize statusFilter;
-@synthesize editTableButton;
-@synthesize saveTableButton;
-@synthesize filterTableButton;
 
 #pragma mark - UIViewControllerMethods
 
@@ -62,16 +62,16 @@
 
     // Display the the button bar.
 	UIBarButtonItem *plusButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addTask:)] autorelease];
+    self.editTableButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(editButtonPressed:)] autorelease];
+    self.saveTableButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(saveButtonPressed:)] autorelease];
 	self.navigationItem.rightBarButtonItem = plusButton;
+    self.navigationItem.leftBarButtonItem = self.editTableButton;
     self.navigationItem.title = @"Tasks";
 
     // Create the edit button.
-    self.editTableButton = [[[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleBordered target:self action:@selector(editButtonPressed:)] autorelease];
-    self.saveTableButton = [[[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStyleDone target:self action:@selector(saveButtonPressed:)] autorelease];
     self.filterTableButton = [[[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(addStatusFilter:)] autorelease];
-    self.editTableButton.width = self.filterTableButton.width;
     
-    NSArray* items = [[[NSArray alloc] initWithObjects:self.editTableButton, self.filterTableButton, nil] autorelease];
+    NSArray* items = [[[NSArray alloc] initWithObjects:self.filterTableButton, nil] autorelease];
     [self.toolbar setItems:items];
 
     dataTable.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -103,14 +103,12 @@
 
 - (IBAction)editButtonPressed:(UIButton*)aButton {
     [[self dataTable] setEditing:YES animated:YES];
-    NSArray* items = [[[NSArray alloc] initWithObjects:self.saveTableButton, self.filterTableButton, nil] autorelease];
-    [self.toolbar setItems:items];
+    self.navigationItem.leftBarButtonItem = self.saveTableButton;
 }
 
 - (IBAction)saveButtonPressed:(UIButton*)aButton {
     [[self dataTable] setEditing:NO animated:YES];
-    NSArray* items = [[[NSArray alloc] initWithObjects:self.editTableButton, self.filterTableButton, nil] autorelease];
-    [self.toolbar setItems:items];
+    self.navigationItem.leftBarButtonItem = self.editTableButton;
 }
 
 - (IBAction)addTask:(UIButton*)aButton {
