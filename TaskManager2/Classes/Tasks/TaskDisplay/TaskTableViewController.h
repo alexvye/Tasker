@@ -15,6 +15,7 @@
     UIBarButtonItem* editTableButton;
     UIBarButtonItem* saveTableButton;
     UIBarButtonItem* filterTableButton;
+    UIBarButtonItem *flexible;
     NSMutableArray* tasks;
     NSArray* tags;
 	int parentId;
@@ -28,6 +29,7 @@
 @property(nonatomic, retain) UIBarButtonItem* editTableButton;
 @property(nonatomic, retain) UIBarButtonItem* saveTableButton;
 @property(nonatomic, retain) UIBarButtonItem* filterTableButton;
+@property(nonatomic, retain) UIBarButtonItem* flexible;
 @property(nonatomic, retain) NSMutableArray* tasks;
 @property(nonatomic, retain) NSArray* tags;
 @property(nonatomic, assign) int parentId;

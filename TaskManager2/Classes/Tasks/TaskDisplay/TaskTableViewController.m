@@ -29,6 +29,7 @@
 @synthesize editTableButton;
 @synthesize saveTableButton;
 @synthesize filterTableButton;
+@synthesize flexible;
 @synthesize tasks;
 @synthesize tags;
 @synthesize parentId;
@@ -65,13 +66,12 @@
     self.editTableButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(editButtonPressed:)] autorelease];
     self.saveTableButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(saveButtonPressed:)] autorelease];
 	self.navigationItem.rightBarButtonItem = plusButton;
-    self.navigationItem.leftBarButtonItem = self.editTableButton;
     self.navigationItem.title = @"Tasks";
 
     // Create the edit button.
     self.filterTableButton = [[[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(addStatusFilter:)] autorelease];
-    
-    NSArray* items = [[[NSArray alloc] initWithObjects:self.filterTableButton, nil] autorelease];
+    self.flexible = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease];
+    NSArray* items = [[[NSArray alloc] initWithObjects:self.editTableButton, self.flexible, self.filterTableButton, nil] autorelease];
     [self.toolbar setItems:items];
 
     dataTable.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -103,12 +103,14 @@
 
 - (IBAction)editButtonPressed:(UIButton*)aButton {
     [[self dataTable] setEditing:YES animated:YES];
-    self.navigationItem.leftBarButtonItem = self.saveTableButton;
+    NSArray* items = [[[NSArray alloc] initWithObjects:self.saveTableButton, self.flexible, self.filterTableButton, nil] autorelease];
+    [self.toolbar setItems:items];
 }
 
 - (IBAction)saveButtonPressed:(UIButton*)aButton {
     [[self dataTable] setEditing:NO animated:YES];
-    self.navigationItem.leftBarButtonItem = self.editTableButton;
+    NSArray* items = [[[NSArray alloc] initWithObjects:self.editTableButton, self.flexible, self.filterTableButton, nil] autorelease];
+    [self.toolbar setItems:items];
 }
 
 - (IBAction)addTask:(UIButton*)aButton {
@@ -538,6 +540,7 @@
     [editTableButton release];
     [saveTableButton release];
     [filterTableButton release];
+    [flexible release];
     [tasks release];
     [tags release];
     [parentSystemId release];
