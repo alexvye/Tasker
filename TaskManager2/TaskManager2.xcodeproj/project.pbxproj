@@ -65,15 +65,6 @@
 		B5F5AFA71506E65B00C3A135 /* DetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5F5AFA21506E65B00C3A135 /* DetailViewController.xib */; };
 		B5F5AFA81506E65B00C3A135 /* MasterViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5F5AFA41506E65B00C3A135 /* MasterViewController.m */; };
 		B5F5AFA91506E65B00C3A135 /* MasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5F5AFA51506E65B00C3A135 /* MasterViewController.xib */; };
-		B5F5AFB31506E8B700C3A135 /* bottomRow.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F5AFAA1506E8B700C3A135 /* bottomRow.png */; };
-		B5F5AFB41506E8B700C3A135 /* bottomRowSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F5AFAB1506E8B700C3A135 /* bottomRowSelected.png */; };
-		B5F5AFB51506E8B700C3A135 /* gradientBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F5AFAC1506E8B700C3A135 /* gradientBackground.png */; };
-		B5F5AFB61506E8B700C3A135 /* middleRow.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F5AFAD1506E8B700C3A135 /* middleRow.png */; };
-		B5F5AFB71506E8B700C3A135 /* middleRowSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F5AFAE1506E8B700C3A135 /* middleRowSelected.png */; };
-		B5F5AFB81506E8B700C3A135 /* topAndBottomRow.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F5AFAF1506E8B700C3A135 /* topAndBottomRow.png */; };
-		B5F5AFB91506E8B700C3A135 /* topAndBottomRowSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F5AFB01506E8B700C3A135 /* topAndBottomRowSelected.png */; };
-		B5F5AFBA1506E8B700C3A135 /* topRow.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F5AFB11506E8B700C3A135 /* topRow.png */; };
-		B5F5AFBB1506E8B700C3A135 /* topRowSelected.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F5AFB21506E8B700C3A135 /* topRowSelected.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -162,15 +153,6 @@
 		B5F5AFA31506E65B00C3A135 /* MasterViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MasterViewController.h; path = iPad/Classes/MasterViewController.h; sourceTree = "<group>"; };
 		B5F5AFA41506E65B00C3A135 /* MasterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MasterViewController.m; path = iPad/Classes/MasterViewController.m; sourceTree = "<group>"; };
 		B5F5AFA51506E65B00C3A135 /* MasterViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MasterViewController.xib; path = iPad/Classes/MasterViewController.xib; sourceTree = "<group>"; };
-		B5F5AFAA1506E8B700C3A135 /* bottomRow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bottomRow.png; path = resources/images/bottomRow.png; sourceTree = "<group>"; };
-		B5F5AFAB1506E8B700C3A135 /* bottomRowSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = bottomRowSelected.png; path = resources/images/bottomRowSelected.png; sourceTree = "<group>"; };
-		B5F5AFAC1506E8B700C3A135 /* gradientBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = gradientBackground.png; path = resources/images/gradientBackground.png; sourceTree = "<group>"; };
-		B5F5AFAD1506E8B700C3A135 /* middleRow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = middleRow.png; path = resources/images/middleRow.png; sourceTree = "<group>"; };
-		B5F5AFAE1506E8B700C3A135 /* middleRowSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = middleRowSelected.png; path = resources/images/middleRowSelected.png; sourceTree = "<group>"; };
-		B5F5AFAF1506E8B700C3A135 /* topAndBottomRow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = topAndBottomRow.png; path = resources/images/topAndBottomRow.png; sourceTree = "<group>"; };
-		B5F5AFB01506E8B700C3A135 /* topAndBottomRowSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = topAndBottomRowSelected.png; path = resources/images/topAndBottomRowSelected.png; sourceTree = "<group>"; };
-		B5F5AFB11506E8B700C3A135 /* topRow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = topRow.png; path = resources/images/topRow.png; sourceTree = "<group>"; };
-		B5F5AFB21506E8B700C3A135 /* topRowSelected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = topRowSelected.png; path = resources/images/topRowSelected.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -278,15 +260,6 @@
 		B5F5AF211506D76100C3A135 /* images */ = {
 			isa = PBXGroup;
 			children = (
-				B5F5AFAA1506E8B700C3A135 /* bottomRow.png */,
-				B5F5AFAB1506E8B700C3A135 /* bottomRowSelected.png */,
-				B5F5AFAC1506E8B700C3A135 /* gradientBackground.png */,
-				B5F5AFAD1506E8B700C3A135 /* middleRow.png */,
-				B5F5AFAE1506E8B700C3A135 /* middleRowSelected.png */,
-				B5F5AFAF1506E8B700C3A135 /* topAndBottomRow.png */,
-				B5F5AFB01506E8B700C3A135 /* topAndBottomRowSelected.png */,
-				B5F5AFB11506E8B700C3A135 /* topRow.png */,
-				B5F5AFB21506E8B700C3A135 /* topRowSelected.png */,
 				B5F5AF2E1506D86400C3A135 /* black.png */,
 				B5F5AF2F1506D86400C3A135 /* green.png */,
 				B5F5AF301506D86400C3A135 /* red.png */,
@@ -490,15 +463,6 @@
 				B5F5AF9E1506E5FE00C3A135 /* MainWindow.xib in Resources */,
 				B5F5AFA71506E65B00C3A135 /* DetailViewController.xib in Resources */,
 				B5F5AFA91506E65B00C3A135 /* MasterViewController.xib in Resources */,
-				B5F5AFB31506E8B700C3A135 /* bottomRow.png in Resources */,
-				B5F5AFB41506E8B700C3A135 /* bottomRowSelected.png in Resources */,
-				B5F5AFB51506E8B700C3A135 /* gradientBackground.png in Resources */,
-				B5F5AFB61506E8B700C3A135 /* middleRow.png in Resources */,
-				B5F5AFB71506E8B700C3A135 /* middleRowSelected.png in Resources */,
-				B5F5AFB81506E8B700C3A135 /* topAndBottomRow.png in Resources */,
-				B5F5AFB91506E8B700C3A135 /* topAndBottomRowSelected.png in Resources */,
-				B5F5AFBA1506E8B700C3A135 /* topRow.png in Resources */,
-				B5F5AFBB1506E8B700C3A135 /* topRowSelected.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

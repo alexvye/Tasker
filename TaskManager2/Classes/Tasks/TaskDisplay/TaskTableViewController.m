@@ -36,6 +36,7 @@
 @synthesize parentSystemId;
 @synthesize filter;
 @synthesize statusFilter;
+@synthesize startedFilter;
 
 #pragma mark - UIViewControllerMethods
 
@@ -44,6 +45,7 @@
     if (self != nil) {
         self.parentId = NO_PARENT;
 		self.parentSystemId = nil;
+        self.startedFilter = NO;
     }
     return self;
 }
@@ -74,8 +76,6 @@
     NSArray* items = [[[NSArray alloc] initWithObjects:self.editTableButton, self.flexible, self.filterTableButton, nil] autorelease];
     [self.toolbar setItems:items];
 
-    dataTable.separatorStyle = UITableViewCellSeparatorStyleNone;
-    dataTable.backgroundColor = [UIColor clearColor];
     dataTable.rowHeight = 60;
     
 }
@@ -83,6 +83,7 @@
 -(void)saveState {    
     [[NSUserDefaults standardUserDefaults] setObject:self.filter forKey:@"tagFilter"];
     [[NSUserDefaults standardUserDefaults] setInteger:self.statusFilter+1 forKey:@"statusFilter"];
+    [[NSUserDefaults standardUserDefaults] setBool:self.startedFilter forKey:@"startedFilter"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
 }
@@ -90,6 +91,7 @@
 -(void)loadState {
     NSString* tagFilter = [[NSUserDefaults standardUserDefaults] objectForKey:@"tagFilter"];
     NSInteger statusCodeFilter = [[NSUserDefaults standardUserDefaults] integerForKey:@"statusFilter"];
+    BOOL startFilter = [[NSUserDefaults standardUserDefaults] boolForKey:@"startedFilter"];
     
     self.filter = tagFilter;
     if (statusCodeFilter != 0) {
@@ -97,6 +99,7 @@
     } else {
         self.statusFilter = 2;
     }    
+    self.startedFilter = startFilter;
 }
 
 #pragma mark - Button Pressed Events
@@ -142,7 +145,8 @@
                                              initWithNibName:@"FilterTasksViewController" 
                                              bundle:nil 
                                              tagFilter:self.filter 
-                                             statusFilter:self.statusFilter];
+                                             statusFilter:self.statusFilter
+                                             startFilter:self.startedFilter];
 	
 	// 
 	// Pass the selected object to the new view controller.
@@ -160,14 +164,17 @@
         tmpTasks = [TaskDAO getAllChildTasks:self.parentId :self.parentSystemId :self.statusFilter];
     }
     
-    if (filter == nil) {
+    if (self.filter == nil && !self.startedFilter) {
         self.tasks = tmpTasks;
     } else {
         NSMutableArray* postFilteredTasks = [[[NSMutableArray alloc] init] autorelease];
         for (Task *task in tmpTasks) {
-            if ([task.tags containsObject:filter]) {
-                [postFilteredTasks addObject:task];
-            }
+            NSTimeInterval timeSinceStart = [task.startDate timeIntervalSinceNow];
+            if (!self.startedFilter || timeSinceStart <= 0) {
+                if (self.filter == nil || [task.tags containsObject:filter]) {
+                    [postFilteredTasks addObject:task];
+                }
+            }            
         }
         self.tasks = postFilteredTasks;
     }
@@ -250,7 +257,7 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    if (self.filter != nil || self.statusFilter != 2) {
+    if (self.filter != nil || self.statusFilter != 2 || self.startedFilter) {
         return 2;
     } else {
         return 1;
@@ -283,38 +290,39 @@
     }
     
     if (indexPath.section == 1) {
-        NSString *filterStr = @"";
+        NSMutableString* filterStr = [NSMutableString stringWithCapacity:20];
         if (self.filter != nil) {
-            filterStr = [filterStr stringByAppendingFormat:@"[Tag = %@]  ", self.filter];
+            [filterStr appendFormat:@"[Tag = %@]  ", self.filter];
         }
         if (self.statusFilter != 2) {
             if (self.statusFilter == 0) {
-                filterStr = [filterStr stringByAppendingString:@"[Not Completed Tasks]"];
+                [filterStr appendFormat:@"[Not Completed Tasks]"];
             } else {
-                filterStr = [filterStr stringByAppendingString:@"[Completed Tasks]"];
+                [filterStr appendFormat:@"[Completed Tasks]"];
             }
+        }
+        if (self.startedFilter) {
+            [filterStr appendFormat:@"[Started Tasks]"];
         }
         
         cell.accessoryType = UITableViewCellAccessoryNone;
 
         cell.textLabel.text = @"Tasks filtered by:";
         cell.textLabel.textColor = [UIColor blackColor];
-        cell.textLabel.backgroundColor = [UIColor clearColor];
 
         cell.detailTextLabel.textColor = [UIColor colorWithRed:0.22 green:0.33 blue:0.53 alpha:1.0];;
         cell.detailTextLabel.text = filterStr;
-        cell.detailTextLabel.backgroundColor = [UIColor clearColor];
+        cell.detailTextLabel.adjustsFontSizeToFitWidth = YES;
         cell.imageView.image = nil;
     } else {
         if ([self.tasks count] == 0) {
             cell.accessoryType = UITableViewCellAccessoryNone;
             cell.textLabel.text = @"0 tasks to display";
             cell.textLabel.textColor = [UIColor blackColor];
-            cell.textLabel.backgroundColor = [UIColor clearColor];
             cell.detailTextLabel.text = nil;
             cell.imageView.image = nil;
         } else {
-            cell.accessoryType = UITableViewCellAccessoryNone;
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             Task* task = (Task*) [self.tasks objectAtIndex:indexPath.row];
             if (task != nil) {
                 // Display the status color.
@@ -344,10 +352,9 @@
                 cell.textLabel.minimumFontSize = 10;
                 if (task.status == 1) {
                     cell.textLabel.textColor = [UIColor lightGrayColor];
-                    cell.textLabel.backgroundColor = [UIColor clearColor];
                 } else {
                     cell.textLabel.textColor = [UIColor blackColor];
-                    cell.textLabel.backgroundColor = [UIColor clearColor];
+
                 }
                 
                 // Display the task description
@@ -356,51 +363,15 @@
                 cell.detailTextLabel.text = [NSString stringWithFormat:@"Due date: %@", [formatter stringFromDate:task.endDate]];
                 if (task.status == 1) {
                     cell.detailTextLabel.textColor = [UIColor lightGrayColor];
-                    cell.detailTextLabel.backgroundColor = [UIColor clearColor];
                 } else {
-                    cell.detailTextLabel.textColor = [UIColor colorWithRed:0.22 green:0.33 blue:0.53 alpha:1.0];;
-                    cell.detailTextLabel.backgroundColor = [UIColor clearColor];
+                    cell.detailTextLabel.textColor = [UIColor colorWithRed:0.22 green:0.33 blue:0.53 alpha:1.0];
                 }
             } else {
                 NSLog(@"%d section: %d row: nil pointer", indexPath.section, indexPath.row);
             }
         }
     }
-    
-    //
-    // Set the background and selected background images for the text.
-    // Since we will round the corners at the top and bottom of sections, we
-    // need to conditionally choose the images based on the row index and the
-    // number of rows in the section.
-    //
-    UIImage *rowBackground;
-    UIImage *selectionBackground;
-    NSInteger sectionRows = [self.tasks count];
-    NSInteger row = [indexPath row];
-	if (indexPath.section == 0) {
-        if (([self.tasks count] == 0) || (row == 0 && row == sectionRows - 1)) {
-            rowBackground = [UIImage imageNamed:@"topAndBottomRow.png"];
-            selectionBackground = [UIImage imageNamed:@"topAndBottomRowSelected.png"];
-        } else if (row == 0) {
-            rowBackground = [UIImage imageNamed:@"topRow.png"];
-            selectionBackground = [UIImage imageNamed:@"topRowSelected.png"];
-        } else if (row == sectionRows - 1) {
-            rowBackground = [UIImage imageNamed:@"bottomRow.png"];
-            selectionBackground = [UIImage imageNamed:@"bottomRowSelected.png"];
-        } else {
-            rowBackground = [UIImage imageNamed:@"middleRow.png"];
-            selectionBackground = [UIImage imageNamed:@"middleRowSelected.png"];
-        }
-    } else {
-        rowBackground = [UIImage imageNamed:@"topAndBottomRow.png"];
-        selectionBackground = [UIImage imageNamed:@"topAndBottomRowSelected.png"];
-    }
-        
-    cell.backgroundView = [[[UIImageView alloc] init] autorelease];
-    cell.selectedBackgroundView =[[[UIImageView alloc] init] autorelease];
-    ((UIImageView *)cell.backgroundView).image = rowBackground;
-    ((UIImageView *)cell.selectedBackgroundView).image = selectionBackground;
-    
+
     return cell;
 }
 
@@ -413,6 +384,13 @@
 	[TaskDAO deleteTask:task.taskId :task.systemId];
 	self.tasks = nil;
 	[self.dataTable reloadData]; 
+}
+
+- (NSString*)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+    if ((self.filter != nil || self.statusFilter != 2) && section == 1) {
+        return @"Filter";
+    }
+    return nil;
 }
 
 //
@@ -430,7 +408,7 @@
         
         // Get indexes from the full list based.
         NSMutableArray* fullList = nil;
-        if (self.filter == nil && self.statusFilter == 2) {
+        if (self.filter == nil && self.statusFilter == 2 && !self.startedFilter) {
             fullList = [[self.tasks mutableCopy] autorelease];
         } else {
             // Get tasks from merged list.
@@ -463,11 +441,7 @@
             [TaskDAO updateTaskPriority:task.taskId :task.systemId :i];
         }
     }
-/*
-    if (self.filter != nil || self.statusFilter != 2) {
-        [self setupFilteredTasks];
-    }
-*/
+
     self.tasks = nil;
 
 	[self.dataTable reloadData];

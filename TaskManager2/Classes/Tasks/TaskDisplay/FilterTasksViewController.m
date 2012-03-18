@@ -17,13 +17,15 @@
 @synthesize tags;
 @synthesize tagFilter;
 @synthesize statusFilter;
+@synthesize startedFilter;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil tagFilter:(NSString*)tag statusFilter:(int)status {
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil tagFilter:(NSString*)tag statusFilter:(int)status startFilter:(BOOL)startFilter {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         self.tags = [TaskDAO getAllTags];
         self.tagFilter = tag;
         self.statusFilter = status;
+        self.startedFilter = startFilter;
     }
     return self;
 }
@@ -47,20 +49,23 @@
 - (IBAction)donePressed:(id)sender {
     [[NSUserDefaults standardUserDefaults] setObject:self.tagFilter forKey:@"tagFilter"];
     [[NSUserDefaults standardUserDefaults] setInteger:self.statusFilter+1 forKey:@"statusFilter"];
+    [[NSUserDefaults standardUserDefaults] setBool:self.startedFilter forKey:@"startedFilter"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
 	[self dismissModalViewControllerAnimated:YES];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 2;
+    return 3;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0) {
         return [self.tags count] + 1;
-    } else {
+    } else if (section == 1) {
         return 3;
+    } else {
+        return 2;
     }
 }
 
@@ -87,7 +92,7 @@
                 cell.accessoryType = UITableViewCellAccessoryNone;
             }
         }
-    } else {
+    } else if (indexPath.section == 1) {
         if (indexPath.row == 0) {
             cell.textLabel.text = @"Not completed";
         } else if (indexPath.row == 1) {
@@ -100,6 +105,14 @@
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
         } else {
             cell.accessoryType = UITableViewCellAccessoryNone;
+        }
+    } else {
+        if (indexPath.row == 0) {
+            cell.textLabel.text = @"Started Tasks";
+            cell.accessoryType = (self.startedFilter) ? UITableViewCellAccessoryCheckmark : UITableViewCellAccessoryNone;
+        } else {
+            cell.textLabel.text = @"All";
+            cell.accessoryType = (self.startedFilter) ? UITableViewCellAccessoryNone : UITableViewCellAccessoryCheckmark;
         }
     }
     
@@ -125,8 +138,10 @@
         } else {
             self.tagFilter = nil;
         }
-    } else {
+    } else  if (indexPath.section == 1)  {
         self.statusFilter = indexPath.row;
+    } else {
+        self.startedFilter = (indexPath.row == 0);
     }
     
 	return indexPath;

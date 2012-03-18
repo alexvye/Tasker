@@ -35,9 +35,6 @@
     self.editTableButton = [[[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleBordered target:self action:@selector(editButtonPressed:)] autorelease];
     self.saveTableButton = [[[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStyleDone target:self action:@selector(saveButtonPressed:)] autorelease];
     self.navigationItem.leftBarButtonItem = self.editTableButton;        
-    
-    dataTable.separatorStyle = UITableViewCellSeparatorStyleNone;
-    dataTable.backgroundColor = [UIColor clearColor];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -112,36 +109,6 @@
     // Configure the cell...
     [self loadTags];
     [[cell textLabel] setText:(NSString*) [self.tags objectAtIndex:[indexPath row]]];
-    [cell.textLabel setBackgroundColor:[UIColor clearColor]];
-		
-	//
-	// Set the background and selected background images for the text.
-	// Since we will round the corners at the top and bottom of sections, we
-	// need to conditionally choose the images based on the row index and the
-	// number of rows in the section.
-	//
-	UIImage *rowBackground;
-	UIImage *selectionBackground;
-	NSInteger sectionRows = [self.tags count];
-	NSInteger row = [indexPath row];
-	if (row == 0 && row == sectionRows - 1) {
-		rowBackground = [UIImage imageNamed:@"topAndBottomRow.png"];
-		selectionBackground = [UIImage imageNamed:@"topAndBottomRowSelected.png"];
-	} else if (row == 0) {
-		rowBackground = [UIImage imageNamed:@"topRow.png"];
-		selectionBackground = [UIImage imageNamed:@"topRowSelected.png"];
-	} else if (row == sectionRows - 1) {
-		rowBackground = [UIImage imageNamed:@"bottomRow.png"];
-		selectionBackground = [UIImage imageNamed:@"bottomRowSelected.png"];
-	} else {
-		rowBackground = [UIImage imageNamed:@"middleRow.png"];
-		selectionBackground = [UIImage imageNamed:@"middleRowSelected.png"];
-	}
-    
-    cell.backgroundView = [[[UIImageView alloc] init] autorelease];
-    cell.selectedBackgroundView =[[[UIImageView alloc] init] autorelease];
-	((UIImageView *)cell.backgroundView).image = rowBackground;
-    ((UIImageView *)cell.selectedBackgroundView).image = selectionBackground;
 
     return cell;
 }

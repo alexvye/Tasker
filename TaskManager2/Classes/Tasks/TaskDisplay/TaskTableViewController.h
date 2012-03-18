@@ -24,6 +24,7 @@
 	NSString* parentSystemId;
     NSString* filter;
     int statusFilter;
+    BOOL startedFilter;
 }
 
 @property(nonatomic, retain) IBOutlet UITableView* dataTable;
@@ -38,6 +39,7 @@
 @property(nonatomic, retain) NSString* parentSystemId;
 @property(nonatomic, retain) NSString* filter;
 @property(nonatomic, assign) int statusFilter;
+@property(nonatomic, assign) BOOL startedFilter;
 
 - (IBAction)editButtonPressed:(UIButton*)aButton;
 - (IBAction)saveButtonPressed:(UIButton*)aButton;
