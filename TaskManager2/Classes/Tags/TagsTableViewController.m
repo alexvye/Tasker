@@ -12,20 +12,34 @@
 #import "TaskDAO.h"
 
 @implementation TagsTableViewController
-@synthesize dataTable;
-@synthesize tags;
+@synthesize dataSource = _dataSource;
+@synthesize dataTable = _dataTable;
 @synthesize editTableButton;
 @synthesize saveTableButton;
 
-#pragma mark -
-#pragma mark View lifecycle
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self != nil) {
+        self.dataSource = [[[TagsDataSource alloc] init] autorelease];
+    }
+    return self;
+}
 
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    if (self != nil) {        
+        self.dataSource = [[[TagsDataSource alloc] init] autorelease];
+    }
+    return self;
+}
 
+#pragma mark - View lifecycle
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    self.dataTable.dataSource = self.dataSource;
 
     // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 	UIBarButtonItem *plusButton = [[UIBarButtonItem alloc] 
 								   initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addTags:)];
 	self.navigationItem.rightBarButtonItem = plusButton;
@@ -38,7 +52,6 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-	[DataManager loadData];
 	[self.dataTable reloadData];
 	[super viewWillAppear:animated];
 }
@@ -54,81 +67,15 @@
 }
  
  -(IBAction) addTags: (UIButton*) aButton {
-	 //
-	 // push the view controller
-	 //
 	 TagsAddViewController *tagsAddView = [[[TagsAddViewController alloc] 
 											initWithNibName:@"TagsAddViewController" 
 											         bundle:nil] autorelease];
 	 
-	 // 
-	 // Pass the selected object to the new view controller.
-	 //
-	 [self presentModalViewController:tagsAddView animated:YES];
-     
-     self.tags = nil;
+     self.dataSource.tags = nil;
+	 [self presentModalViewController:tagsAddView animated:YES];     
  }
 
-
-#pragma mark -
-#pragma mark Table view data source
-
-- (void) deselect
-{	
-	[self.dataTable deselectRowAtIndexPath:[self.dataTable indexPathForSelectedRow] animated:YES];
-}
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    // Return the number of sections.
-    return 1;
-}
-
--(void)loadTags {
-    if (self.tags == nil) {
-        self.tags = [TaskDAO getAllTags];
-    }
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    // Return the number of rows in the section.
-    [self loadTags];
-    return [self.tags count];
-}
-
-
-// Customize the appearance of table view cells.
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    static NSString *CellIdentifier = @"Cell";
-    
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (cell == nil) {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier] autorelease];
-    }
-    
-    // Configure the cell...
-    [self loadTags];
-    [[cell textLabel] setText:(NSString*) [self.tags objectAtIndex:[indexPath row]]];
-
-    return cell;
-}
-
-
-//
-// Override to support editing the table view.
-//
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    [self loadTags];
-	[TaskDAO removeTag:[self.tags objectAtIndex:indexPath.row]];
-    self.tags = nil;
-    [self loadTags];
-	[self.dataTable reloadData]; 
-}
-
-
-#pragma mark -
-#pragma mark Table view delegate
-
+#pragma mark - UITableViewDelegate methods
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     // Navigation logic may go here. Create and push another view controller.
 	UITableViewCell *cell = [self.dataTable cellForRowAtIndexPath:indexPath];
@@ -138,31 +85,26 @@
 											   bundle:nil] autorelease];
 		tagsUpdateView.newTagFlag = NO;
 		tagsUpdateView.prevTag = cell.textLabel.text;
+        self.dataSource.tags = nil;
 		[self presentModalViewController:tagsUpdateView animated:YES];
 	}
 }
 
 
-#pragma mark -
-#pragma mark Memory management
+#pragma mark - Memory management
 
 - (void)didReceiveMemoryWarning {
     // Releases the view if it doesn't have a superview.
     [super didReceiveMemoryWarning];
     
     // Relinquish ownership any cached data, images, etc that aren't in use.
-    self.tags = nil;
-}
-
-- (void)viewDidUnload {
-    // Relinquish ownership of anything that can be recreated in viewDidLoad or on demand.
-    // For example: self.myOutlet = nil;
+    self.dataSource.tags = nil;
 }
 
 
 - (void)dealloc {
-	[dataTable release];
-    [tags release];
+    [_dataSource release];
+	[_dataTable release];
     [editTableButton release];
     [saveTableButton release];
     [super dealloc];

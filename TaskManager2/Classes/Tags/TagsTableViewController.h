@@ -7,22 +7,19 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TagsDataSource.h"
 
-
-@interface TagsTableViewController : UIViewController {
-	UITableView* dataTable;
+@interface TagsTableViewController : UIViewController<UITableViewDelegate> {
     UIBarButtonItem* editTableButton;
     UIBarButtonItem* saveTableButton;
-    NSArray* tags;
 }
 
-@property(nonatomic, retain) IBOutlet UITableView* dataTable;
+@property(nonatomic, strong) TagsDataSource* dataSource;
+@property(nonatomic, strong) IBOutlet UITableView* dataTable;
 @property(nonatomic, retain) UIBarButtonItem* editTableButton;
 @property(nonatomic, retain) UIBarButtonItem* saveTableButton;
-@property(nonatomic, retain) NSArray* tags;
 
 -(IBAction)editButtonPressed:(UIButton*)aButton;
 -(IBAction)saveButtonPressed:(UIButton*)aButton;
--(void)loadTags;
 
 @end

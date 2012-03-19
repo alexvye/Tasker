@@ -16,6 +16,7 @@
 		B5A6A01C14B9134D00E3132A /* TaskManager2iPadWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5A6A01B14B9134D00E3132A /* TaskManager2iPadWindow.xib */; };
 		B5BB95721305994600DAB40A /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B5BB95711305994600DAB40A /* libsqlite3.dylib */; };
 		B5C9D840151783830017525C /* TaskDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = B5C9D83F151783830017525C /* TaskDataSource.m */; };
+		B5C9D8481517D4950017525C /* TagsDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = B5C9D8471517D4950017525C /* TagsDataSource.m */; };
 		B5F4B6811334AAFA003E9065 /* CommonUI.m in Sources */ = {isa = PBXBuildFile; fileRef = B5F4B6801334AAF9003E9065 /* CommonUI.m */; };
 		B5F5AF261506D78700C3A135 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F5AF221506D78700C3A135 /* Icon-72.png */; };
 		B5F5AF271506D78700C3A135 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F5AF231506D78700C3A135 /* Icon.png */; };
@@ -84,6 +85,8 @@
 		B5BB95711305994600DAB40A /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		B5C9D83E151783830017525C /* TaskDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TaskDataSource.h; path = Tasks/TaskDisplay/TaskDataSources/TaskDataSource.h; sourceTree = "<group>"; };
 		B5C9D83F151783830017525C /* TaskDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TaskDataSource.m; path = Tasks/TaskDisplay/TaskDataSources/TaskDataSource.m; sourceTree = "<group>"; };
+		B5C9D8461517D4950017525C /* TagsDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TagsDataSource.h; path = Tags/TagsDataSources/TagsDataSource.h; sourceTree = "<group>"; };
+		B5C9D8471517D4950017525C /* TagsDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TagsDataSource.m; path = Tags/TagsDataSources/TagsDataSource.m; sourceTree = "<group>"; };
 		B5F4B67F1334AAF9003E9065 /* CommonUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonUI.h; sourceTree = "<group>"; };
 		B5F4B6801334AAF9003E9065 /* CommonUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonUI.m; sourceTree = "<group>"; };
 		B5F5AF221506D78700C3A135 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72.png"; path = "resources/Icon-72.png"; sourceTree = "<group>"; };
@@ -269,6 +272,15 @@
 			name = TaskDataSources;
 			sourceTree = "<group>";
 		};
+		B5C9D8451517D4570017525C /* TagsDataSources */ = {
+			isa = PBXGroup;
+			children = (
+				B5C9D8461517D4950017525C /* TagsDataSource.h */,
+				B5C9D8471517D4950017525C /* TagsDataSource.m */,
+			);
+			name = TagsDataSources;
+			sourceTree = "<group>";
+		};
 		B5F5AF211506D76100C3A135 /* images */ = {
 			isa = PBXGroup;
 			children = (
@@ -372,6 +384,7 @@
 		B5F5AF921506E55200C3A135 /* Tags */ = {
 			isa = PBXGroup;
 			children = (
+				B5C9D8451517D4570017525C /* TagsDataSources */,
 				B5F5AF931506E58000C3A135 /* TagsAddViewController.h */,
 				B5F5AF941506E58000C3A135 /* TagsAddViewController.m */,
 				B5F5AF951506E58000C3A135 /* TagsAddViewController.xib */,
@@ -512,6 +525,7 @@
 				B5F5AFA61506E65B00C3A135 /* DetailViewController.m in Sources */,
 				B5F5AFA81506E65B00C3A135 /* MasterViewController.m in Sources */,
 				B5C9D840151783830017525C /* TaskDataSource.m in Sources */,
+				B5C9D8481517D4950017525C /* TagsDataSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

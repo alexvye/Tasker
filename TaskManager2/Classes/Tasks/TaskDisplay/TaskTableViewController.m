@@ -10,10 +10,7 @@
 #import "TaskAddViewController.h"
 #import "FilterTasksViewController.h"
 #import "TaskDetailViewController.h"
-#import "TaskManager2AppDelegate.h"
-#import "DataManager.h"
 #import "Task.h"
-#import "TaskDAO.h"
 
 @implementation TaskTableViewController
 @synthesize dataTable;
@@ -24,7 +21,7 @@
 @synthesize filterTableButton;
 @synthesize flexible;
 
-#pragma mark - UIViewControllerMethods
+#pragma mark - UIViewController methods
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -113,14 +110,6 @@
     self.dataSource.tasks = nil;
 	[self presentModalViewController:filterTask animated:YES];
 }
-
-#pragma mark -
-#pragma mark Table view data source
-
-- (void) deselect {	
-	[self.dataTable deselectRowAtIndexPath:[self.dataTable indexPathForSelectedRow] animated:YES];
-}
-
 #pragma mark -
 #pragma mark Table view delegate
 

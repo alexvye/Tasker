@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "TaskDataSource.h"
 
-@interface TaskTableViewController : UIViewController {
+@interface TaskTableViewController : UIViewController<UITableViewDelegate> {
 	UITableView* dataTable;
     UIToolbar* toolbar;
     UIBarButtonItem* editTableButton;
