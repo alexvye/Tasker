@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 #import "Task.h"
 
+#define TASK_STATUS_ALL     2
+
+
 @interface TaskDAO : NSObject {
 }
 

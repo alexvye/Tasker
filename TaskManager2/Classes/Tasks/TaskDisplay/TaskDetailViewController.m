@@ -433,8 +433,8 @@
         //
         TaskTableViewController *childTaskView = [[TaskTableViewController alloc] 
                                               initWithNibName:@"TaskTableViewController" bundle:nil];
-        childTaskView.parentId = self.task.taskId;
-        childTaskView.parentSystemId = self.task.systemId;
+        childTaskView.dataSource.parentId = self.task.taskId;
+        childTaskView.dataSource.parentSystemId = self.task.systemId;
         
         // 
         // Pass the selected object to the new view controller.

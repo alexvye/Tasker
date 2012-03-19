@@ -27,7 +27,7 @@
 	<key>NSMainNibFile</key>
 	<string>MainWindow</string>
 	<key>NSMainNibFile~ipad</key>
-	<string>MainWindow</string>
+	<string>TaskManager2iPadWindow</string>
 	<key>UIPrerenderedIcon</key>
 	<true/>
 </dict>

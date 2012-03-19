@@ -15,6 +15,7 @@
 		B5A6A01914B90FFB00E3132A /* TaskManager2iPadAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A6A01814B90FFB00E3132A /* TaskManager2iPadAppDelegate.m */; };
 		B5A6A01C14B9134D00E3132A /* TaskManager2iPadWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5A6A01B14B9134D00E3132A /* TaskManager2iPadWindow.xib */; };
 		B5BB95721305994600DAB40A /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B5BB95711305994600DAB40A /* libsqlite3.dylib */; };
+		B5C9D840151783830017525C /* TaskDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = B5C9D83F151783830017525C /* TaskDataSource.m */; };
 		B5F4B6811334AAFA003E9065 /* CommonUI.m in Sources */ = {isa = PBXBuildFile; fileRef = B5F4B6801334AAF9003E9065 /* CommonUI.m */; };
 		B5F5AF261506D78700C3A135 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F5AF221506D78700C3A135 /* Icon-72.png */; };
 		B5F5AF271506D78700C3A135 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F5AF231506D78700C3A135 /* Icon.png */; };
@@ -81,6 +82,8 @@
 		B5A6A01814B90FFB00E3132A /* TaskManager2iPadAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TaskManager2iPadAppDelegate.m; path = iPad/TaskManager2iPadAppDelegate.m; sourceTree = "<group>"; };
 		B5A6A01B14B9134D00E3132A /* TaskManager2iPadWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TaskManager2iPadWindow.xib; sourceTree = "<group>"; };
 		B5BB95711305994600DAB40A /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		B5C9D83E151783830017525C /* TaskDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TaskDataSource.h; path = Tasks/TaskDisplay/TaskDataSources/TaskDataSource.h; sourceTree = "<group>"; };
+		B5C9D83F151783830017525C /* TaskDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TaskDataSource.m; path = Tasks/TaskDisplay/TaskDataSources/TaskDataSource.m; sourceTree = "<group>"; };
 		B5F4B67F1334AAF9003E9065 /* CommonUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonUI.h; sourceTree = "<group>"; };
 		B5F4B6801334AAF9003E9065 /* CommonUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CommonUI.m; sourceTree = "<group>"; };
 		B5F5AF221506D78700C3A135 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72.png"; path = "resources/Icon-72.png"; sourceTree = "<group>"; };
@@ -257,6 +260,15 @@
 			name = "iPad Resources";
 			sourceTree = "<group>";
 		};
+		B5C9D83C151782F60017525C /* TaskDataSources */ = {
+			isa = PBXGroup;
+			children = (
+				B5C9D83E151783830017525C /* TaskDataSource.h */,
+				B5C9D83F151783830017525C /* TaskDataSource.m */,
+			);
+			name = TaskDataSources;
+			sourceTree = "<group>";
+		};
 		B5F5AF211506D76100C3A135 /* images */ = {
 			isa = PBXGroup;
 			children = (
@@ -291,6 +303,7 @@
 		B5F5AF3E1506DB6300C3A135 /* TaskDisplay */ = {
 			isa = PBXGroup;
 			children = (
+				B5C9D83C151782F60017525C /* TaskDataSources */,
 				B5F5AF481506DBB100C3A135 /* TaskTableViewController.h */,
 				B5F5AF491506DBB100C3A135 /* TaskTableViewController.m */,
 				B5F5AF4A1506DBB100C3A135 /* TaskTableViewController.xib */,
@@ -498,6 +511,7 @@
 				B5F5AF9B1506E58000C3A135 /* TagsTableViewController.m in Sources */,
 				B5F5AFA61506E65B00C3A135 /* DetailViewController.m in Sources */,
 				B5F5AFA81506E65B00C3A135 /* MasterViewController.m in Sources */,
+				B5C9D840151783830017525C /* TaskDataSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -515,10 +529,10 @@
 				GCC_PREFIX_HEADER = TaskManager2_Prefix.pch;
 				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = "TaskManager2-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				PRODUCT_NAME = TaskManager2;
 				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -531,10 +545,10 @@
 				GCC_PREFIX_HEADER = TaskManager2_Prefix.pch;
 				GCC_THUMB_SUPPORT = NO;
 				INFOPLIST_FILE = "TaskManager2-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				PRODUCT_NAME = TaskManager2;
 				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

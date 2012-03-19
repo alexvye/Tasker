@@ -7,47 +7,28 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TaskDataSource.h"
 
-#define TASK_STATUS_ALL     2
-
-
-@interface TaskTableViewController : UIViewController<UITableViewDataSource, UIActionSheetDelegate> {
+@interface TaskTableViewController : UIViewController {
 	UITableView* dataTable;
     UIToolbar* toolbar;
     UIBarButtonItem* editTableButton;
     UIBarButtonItem* saveTableButton;
     UIBarButtonItem* filterTableButton;
     UIBarButtonItem *flexible;
-    NSArray* tasks;
-    NSArray* tags;
-	int parentId;
-	NSString* parentSystemId;
-    NSString* filter;
-    int statusFilter;
-    BOOL startedFilter;
 }
 
 @property(nonatomic, retain) IBOutlet UITableView* dataTable;
+@property(nonatomic, strong) IBOutlet TaskDataSource* dataSource;
 @property(nonatomic, retain) IBOutlet UIToolbar* toolbar;
 @property(nonatomic, retain) UIBarButtonItem* editTableButton;
 @property(nonatomic, retain) UIBarButtonItem* saveTableButton;
 @property(nonatomic, retain) UIBarButtonItem* filterTableButton;
 @property(nonatomic, retain) UIBarButtonItem* flexible;
-@property(nonatomic, retain) NSArray* tasks;
-@property(nonatomic, retain) NSArray* tags;
-@property(nonatomic, assign) int parentId;
-@property(nonatomic, retain) NSString* parentSystemId;
-@property(nonatomic, retain) NSString* filter;
-@property(nonatomic, assign) int statusFilter;
-@property(nonatomic, assign) BOOL startedFilter;
 
-- (IBAction)editButtonPressed:(UIButton*)aButton;
-- (IBAction)saveButtonPressed:(UIButton*)aButton;
-- (IBAction)addTask:(UIButton*)aButton;
-- (IBAction)addFilters:(UIButton*)aButton;
-- (IBAction)addStatusFilter:(UIButton*)aButton;
-- (void)popupActionSheet;
-- (void)setupFilteredTasks;
-- (void)setupTags;
+- (IBAction)editButtonPressed:(id)sender;
+- (IBAction)saveButtonPressed:(id)sender;
+- (IBAction)addTask:(id)sender;
+- (IBAction)addStatusFilter:(id)sender;
 
 @end
