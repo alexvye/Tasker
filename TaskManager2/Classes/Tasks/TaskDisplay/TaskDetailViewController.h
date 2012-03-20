@@ -8,22 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "Task.h"
+#import "TaskDetailsDataSource.h"
 
-@interface TaskDetailViewController : UIViewController<UITableViewDataSource, UITableViewDelegate> {
+@interface TaskDetailViewController : UIViewController<UITableViewDataSource> {
 	UITableView* dataTable;
-	Task* task;
-@private
-	float height;
-	float repeatHeight;
-	NSMutableArray* labels;
-	UILabel* repeatLabel;
-	
 }
 
+@property(nonatomic, retain) TaskDetailsDataSource* dataSource;
 @property(nonatomic, retain) IBOutlet UITableView* dataTable;
-@property(nonatomic, retain) Task* task;
-@property(nonatomic, retain) NSMutableArray* labels;
-@property(nonatomic, retain) UILabel* repeatLabel;
 
 - (IBAction)editTask:(id)sender;
 - (IBAction)taskCompleted:(id)sender;

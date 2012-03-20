@@ -16,7 +16,6 @@
 @interface TaskDetailViewController () 
 
 - (int)getNextDayInterval:(int)mask forDate:(NSDate*)date;
-- (void)initLabels;
 - (void)updateChildTasks:(Task*)updateTask;
 - (NSDate*)mergeDateWithTime:(NSDate*)time andDate:(NSDate*)date;
 
@@ -24,10 +23,8 @@
 
 
 @implementation TaskDetailViewController
-@synthesize task;
+@synthesize dataSource = _dataSource;
 @synthesize dataTable;
-@synthesize labels;
-@synthesize repeatLabel;
 
 #pragma mark - UIViewController Methods
 
@@ -41,27 +38,35 @@
                                        action:@selector(editTask:)] autorelease];
         self.navigationItem.title = @"View Task";
         self.navigationItem.rightBarButtonItem = plusButton;
-
-        // Initialize the labels.
-        self.labels = nil;
-        self.repeatLabel = nil;
-        height = 0.0f;
-        repeatHeight = 0.0f;
+        
+        self.dataSource = [[[TaskDetailsDataSource alloc] init] autorelease];
     }
     return self;
 }
 
 - (void)dealloc {
+    [_dataSource release];
 	[dataTable release];
-	[task release];
-	[labels release];
-	[repeatLabel release];
     [super dealloc];
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.dataTable.dataSource = self.dataSource;
+    [self.dataSource initLabels];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self initLabels];
+
+    static BOOL first = YES;
+    if (first) {
+        first = NO;
+    } else {
+        self.dataSource.task = [TaskDAO getTask:self.dataSource.task.taskId :self.dataSource.task.systemId];
+        [self.dataSource initLabels];
+        [self.dataTable reloadData];
+    }
 }
 
 #pragma mark - Private Methods
@@ -80,130 +85,6 @@
     }
     
     return weekday - firstDay;
-}
-  
-- (void)initLabels {
-	// Remove the labels if already initialized
-    if (labels != nil) {
-        self.labels = nil;
-        self.repeatLabel = nil;
-		self.task = [TaskDAO getTask:self.task.taskId :self.task.systemId];
-        [self.dataTable reloadData];
-	}
-    
-    self.labels = [[[NSMutableArray alloc] init] autorelease];
-	CGRect frame = CGRectMake(20.0f, 10.0f, 280.0f, 20.0f);
-	if (self.task.title != nil && self.task.title.length > 0) {
-		UILabel* taskLabel = [[[UILabel alloc] initWithFrame:frame] autorelease];
-        taskLabel.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin);
-		taskLabel.font = [UIFont boldSystemFontOfSize:17];
-		taskLabel.text = self.task.title;
-        taskLabel.backgroundColor = [UIColor clearColor];
-		taskLabel.numberOfLines = 0;
-		[taskLabel sizeToFit];
-		[labels addObject:taskLabel];
-		frame.origin.y += taskLabel.bounds.size.height;
-	}
-	
-	if (self.task.description != nil && self.task.description.length > 0) {
-		UILabel* taskLabel = [[[UILabel alloc] initWithFrame:frame] autorelease];
-        taskLabel.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin);
-		taskLabel.font = [UIFont italicSystemFontOfSize:15];
-		taskLabel.text = self.task.description;
-        taskLabel.backgroundColor = [UIColor clearColor];
-		taskLabel.numberOfLines = 0;
-		[taskLabel sizeToFit];
-		[labels addObject:taskLabel];
-		frame.origin.y += taskLabel.bounds.size.height;
-	}
-    
-    // Set up the date formatter.
-	NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
-	[formatter setDateStyle:NSDateFormatterLongStyle];
-	
-	UILabel* startDateLabel = [[[UILabel alloc] initWithFrame:frame] autorelease];
-    startDateLabel.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin);
-	startDateLabel.font = [UIFont systemFontOfSize:12];
-	startDateLabel.text = [NSString stringWithFormat:@"From %@", [formatter stringFromDate:self.task.startDate]];
-	startDateLabel.textColor = [UIColor colorWithRed:0.22 green:0.33 blue:0.53 alpha:1.0];
-    startDateLabel.backgroundColor = [UIColor clearColor];
-	[startDateLabel sizeToFit];
-	[labels addObject:startDateLabel];
-	frame.origin.y += startDateLabel.bounds.size.height;
-	
-	UILabel* endDateLabel = [[[UILabel alloc] initWithFrame:frame] autorelease];
-    endDateLabel.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin);
-	endDateLabel.font = [UIFont systemFontOfSize:12];
-	endDateLabel.text = [NSString stringWithFormat:@"To %@", [formatter stringFromDate:self.task.endDate]];
-	endDateLabel.textColor = [UIColor colorWithRed:0.22 green:0.33 blue:0.53 alpha:1.0];
-    endDateLabel.backgroundColor = [UIColor clearColor];
-	[endDateLabel sizeToFit];
-	[labels addObject:endDateLabel];
-	frame.origin.y += endDateLabel.bounds.size.height;
-	
-	height = frame.origin.y + 10;
-	
-	if (self.task.recurranceType == NONE) {
-		repeatLabel = nil;
-	} else if (self.task.recurranceType == DAILY) {
-		NSMutableString* text = [[[NSMutableString alloc] initWithCapacity:50] autorelease];
-		[text appendString:@"Repeats every:"];
-		if ((self.task.recurranceValue & 1) == 1) {
-			[text appendString:@"\n    Sunday"];
-		}
-		if ((self.task.recurranceValue & 2) == 2) {
-			[text appendString:@"\n    Monday"];
-		}
-		if ((self.task.recurranceValue & 4) == 4) {
-			[text appendString:@"\n    Tuesday"];
-		}
-		if ((self.task.recurranceValue & 8) == 8) {
-			[text appendString:@"\n    Wednesday"];
-		}
-		if ((self.task.recurranceValue & 16) == 16) {
-			[text appendString:@"\n    Thursday"];
-		}
-		if ((self.task.recurranceValue & 32) == 32) {
-			[text appendString:@"\n    Friday"];
-		}
-		if ((self.task.recurranceValue & 64) == 64) {
-			[text appendString:@"\n    Saturday"];
-		}
-		CGRect frame = CGRectMake(20, 10, 280, 20);
-		repeatLabel = [[UILabel alloc] initWithFrame:frame];
-        repeatLabel.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin);
-		repeatLabel.font = [UIFont systemFontOfSize:12];
-		repeatLabel.text = text;
-		repeatLabel.numberOfLines = 0;
-		repeatLabel.textColor = [UIColor colorWithRed:0.22 green:0.33 blue:0.53 alpha:1.0];
-        repeatLabel.backgroundColor = [UIColor clearColor];
-		[repeatLabel sizeToFit];
-		repeatHeight = repeatLabel.bounds.size.height + 20;
-	} else if (self.task.recurranceType == WEEKLY) {
-		CGRect frame = CGRectMake(20, 10, 280, 20);
-		repeatLabel = [[UILabel alloc] initWithFrame:frame];
-        repeatLabel.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin);
-		repeatLabel.font = [UIFont systemFontOfSize:12];
-		repeatLabel.text = [NSString stringWithFormat:@"Repeats every %d week", self.task.recurranceValue];
-		repeatLabel.numberOfLines = 0;
-		repeatLabel.textColor = [UIColor colorWithRed:0.22 green:0.33 blue:0.53 alpha:1.0];
-        repeatLabel.backgroundColor = [UIColor clearColor];
-		[repeatLabel sizeToFit];
-		repeatHeight = repeatLabel.bounds.size.height + 20;
-	} else if (self.task.recurranceType == MONTHLY) {
-		CGRect frame = CGRectMake(20, 10, 280, 20);
-		repeatLabel = [[UILabel alloc] initWithFrame:frame];
-        repeatLabel.autoresizingMask = (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin);
-		repeatLabel.font = [UIFont systemFontOfSize:12];
-		repeatLabel.text = [NSString stringWithFormat:@"Repeats every %d month", self.task.recurranceValue];
-		repeatLabel.numberOfLines = 0;
-		repeatLabel.textColor = [UIColor colorWithRed:0.22 green:0.33 blue:0.53 alpha:1.0];
-        repeatLabel.backgroundColor = [UIColor clearColor];
-		[repeatLabel sizeToFit];
-		repeatHeight = repeatLabel.bounds.size.height + 20;
-	}
-
-	[self.dataTable reloadData];
 }
 
 - (void)updateChildTasks:(Task*)updateTask {
@@ -233,192 +114,95 @@
 - (IBAction)editTask:(id)sender {
 	TaskAddViewController *taskAddView = [[[TaskAddViewController alloc] 
 										  initWithNibName:@"TaskAddViewController" bundle:nil] autorelease];
-	taskAddView.task = self.task;
+	taskAddView.task = self.dataSource.task;
 	[self presentModalViewController:taskAddView animated:YES];
 }
 
 - (IBAction)taskCompleted:(id)sender {
-    UILocalNotification* notification = [CommonUI getNotificationForTask:task];
+    UILocalNotification* notification = [CommonUI getNotificationForTask:self.dataSource.task];
     
     if ([sender class] == [UISwitch class]) {
         UISwitch* completeSwitch = (UISwitch*) sender;
-        if (task.parentId != NO_PARENT || task.recurranceType == NONE) {
-            task.status = completeSwitch.on;
-            [TaskDAO updateTaskStatus:task.taskId :self.task.systemId :self.task.status];
+        if (self.dataSource.task.parentId != NO_PARENT || self.dataSource.task.recurranceType == NONE) {
+            self.dataSource.task.status = completeSwitch.on;
+            [TaskDAO updateTaskStatus:self.dataSource.task.taskId :self.dataSource.task.systemId :self.dataSource.task.status];
             if (completeSwitch.on && notification != nil) {
-                [CommonUI cancelNotificationForTask:task];
+                [CommonUI cancelNotificationForTask:self.dataSource.task];
             }
-        } else if (task.recurranceType == DAILY) {
+        } else if (self.dataSource.task.recurranceType == DAILY) {
             if (completeSwitch.on) {
                 completeSwitch.on = NO;
-                int daysToAdd = [self getNextDayInterval:task.recurranceValue forDate:self.task.endDate];
-                NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-                NSDateComponents *comps = [[NSDateComponents alloc] init];
+                int daysToAdd = [self getNextDayInterval:self.dataSource.task.recurranceValue forDate:self.dataSource.task.endDate];
+                NSCalendar *gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+                NSDateComponents *comps = [[[NSDateComponents alloc] init] autorelease];
                 [comps setDay:daysToAdd];
-                self.task.startDate = [gregorian dateByAddingComponents:comps toDate:self.task.endDate  options:0];
-                self.task.endDate = self.task.startDate;
-                [TaskDAO updateTask:self.task];
-                [self initLabels];
+                self.dataSource.task.startDate = [gregorian dateByAddingComponents:comps toDate:self.dataSource.task.endDate  options:0];
+                self.dataSource.task.endDate = self.dataSource.task.startDate;
+                [TaskDAO updateTask:self.dataSource.task];
                 [self.dataTable reloadData];
-                [comps release]; 
-                [gregorian release];
                 
                 if (notification != nil) {
-                    notification.fireDate = [self mergeDateWithTime:notification.fireDate andDate:self.task.endDate];
+                    notification.fireDate = [self mergeDateWithTime:notification.fireDate andDate:self.dataSource.task.endDate];
                 }
             }
-        } else if (task.recurranceType == WEEKLY) {
+        } else if (self.dataSource.task.recurranceType == WEEKLY) {
             if (completeSwitch.on) {
                 completeSwitch.on = NO;
-                NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-                NSDateComponents *comps = [[NSDateComponents alloc] init];
+                NSCalendar *gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+                NSDateComponents *comps = [[[NSDateComponents alloc] init] autorelease];
                 [comps setDay:1];
-                self.task.startDate = [gregorian dateByAddingComponents:comps toDate:self.task.endDate  options:0];
-                [comps setDay:self.task.recurranceValue * 7];
-                self.task.endDate = [gregorian dateByAddingComponents:comps toDate:self.task.endDate  options:0];
-                [TaskDAO updateTask:self.task];
-                [self initLabels];
+                self.dataSource.task.startDate = [gregorian dateByAddingComponents:comps toDate:self.dataSource.task.endDate  options:0];
+                [comps setDay:self.dataSource.task.recurranceValue * 7];
+                self.dataSource.task.endDate = [gregorian dateByAddingComponents:comps toDate:self.dataSource.task.endDate  options:0];
+                [TaskDAO updateTask:self.dataSource.task];
                 [self.dataTable reloadData];
-                [comps release]; 
-                [gregorian release];
                 
                 if (notification != nil) {
-                    notification.fireDate = [self mergeDateWithTime:notification.fireDate andDate:self.task.endDate];
+                    notification.fireDate = [self mergeDateWithTime:notification.fireDate andDate:self.dataSource.task.endDate];
                 }
             }
-        } else if (task.recurranceType == MONTHLY) {
+        } else if (self.dataSource.task.recurranceType == MONTHLY) {
             if (completeSwitch.on) {
                 completeSwitch.on = NO;
-                NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
-                NSDateComponents *comps = [[NSDateComponents alloc] init];
+                NSCalendar *gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+                NSDateComponents *comps = [[[NSDateComponents alloc] init] autorelease];
                 [comps setDay:1];
-                self.task.startDate = [gregorian dateByAddingComponents:comps toDate:self.task.endDate  options:0];
+                self.dataSource.task.startDate = [gregorian dateByAddingComponents:comps toDate:self.dataSource.task.endDate  options:0];
                 [comps setDay:0];
-                [comps setMonth:self.task.recurranceValue];
-                self.task.endDate = [gregorian dateByAddingComponents:comps toDate:self.task.endDate  options:0];
-                [TaskDAO updateTask:self.task];
-                [self initLabels];
+                [comps setMonth:self.dataSource.task.recurranceValue];
+                self.dataSource.task.endDate = [gregorian dateByAddingComponents:comps toDate:self.dataSource.task.endDate  options:0];
+                [TaskDAO updateTask:self.dataSource.task];
                 [self.dataTable reloadData];
-                [comps release]; 
-                [gregorian release];
                 
                 if (notification != nil) {
-                    notification.fireDate = [self mergeDateWithTime:notification.fireDate andDate:self.task.endDate];
+                    notification.fireDate = [self mergeDateWithTime:notification.fireDate andDate:self.dataSource.task.endDate];
                 }
             }
         }
-        [self updateChildTasks:self.task];
+        [self updateChildTasks:self.dataSource.task];
     }
 
 }
 
-#pragma mark - UITableView Methods
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView*)tableView {
-	return 3;
-}
-
-- (NSInteger)tableView:(UITableView*)tableView numberOfRowsInSection:(NSInteger)section {
-    if (section == 0) {
-        int rows = 1;
-        if (repeatLabel != nil) {
-            rows++;
-        }
-        if ([CommonUI getNotificationForTask:task] != nil) {
-            rows++;
-        }
-        return rows;
-    }
-    return 1;
-}
-
+#pragma mark - UITableViewDataSource methods
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
 	if (indexPath.section == 0) {
 		if (indexPath.row == 0) {
-			return height;
-        } else if (indexPath.row == 1 && [CommonUI getNotificationForTask:task] != nil) {
+            float height = 20.0f;
+            for (UILabel* label in self.dataSource.detailLabels) {
+                height += label.bounds.size.height;
+            }
+            return height;
+        } else if (indexPath.row == 1 && [CommonUI getNotificationForTask:self.dataSource.task] != nil) {
             return 60.0;
 		} else {
-			return repeatHeight;
+            UILabel* label = self.dataSource.repeatLabel;
+            return label.bounds.size.height + 20.0f;
 		}
 	} else {
 		return 60.0;
 	}
 }
-
-- (UITableViewCell*)tableView:(UITableView*)tableView cellForRowAtIndexPath:(NSIndexPath*)indexPath {
-    UITableViewCell* cell = nil;
-
-    if (indexPath.section == 0) {
-        UILocalNotification* notification = [CommonUI getNotificationForTask:task];
-        if (indexPath.row == 1 && notification != nil) {
-            static NSString *cellIdentifier = @"TaskDetailsAlarm";
-            cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
-            if (cell == nil) {
-                cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:cellIdentifier] autorelease];
-                cell.accessoryType = UITableViewCellAccessoryNone;
-            }
-
-            NSDateFormatter *timeFormatter = [[[NSDateFormatter alloc] init] autorelease];
-            [timeFormatter setDateStyle:NSDateFormatterNoStyle];
-            [timeFormatter setTimeStyle:NSDateFormatterShortStyle];
-            
-            cell.textLabel.text = @"Alert";
-            cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ",
-                                         [timeFormatter stringFromDate:notification.fireDate]];
-        } else {
-//            static NSString *SectionsTableIdentifier = @"TaskDetailsCell";
-//            cell = [tableView dequeueReusableCellWithIdentifier:SectionsTableIdentifier];
-            if (cell == nil) {
-                cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil] autorelease];
-            }
-
-            if ([indexPath row] == 0) {
-                for (UILabel* label in labels) {
-                    [cell addSubview:label];
-                }
-            } else {
-                [cell addSubview:repeatLabel];
-            }
-        }
-    } else if (indexPath.section == 1) {
-        static NSString* SectionsTableIdentifier = @"TaskCompleteCell";
-        cell = [tableView dequeueReusableCellWithIdentifier:SectionsTableIdentifier];
-        if (cell == nil) {
-            cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:SectionsTableIdentifier] autorelease];
-            cell.textLabel.text = @"Task Completed";
-
-            CGRect frame = CGRectMake(198.0, 17.0, 94.0, 27.0);
-            UISwitch* switchCtl = [[[UISwitch alloc] initWithFrame:frame] autorelease];
-            [switchCtl addTarget:self action:@selector(taskCompleted:) forControlEvents:UIControlEventValueChanged];
-
-            // in case the parent view draws with a custom color or gradient, use a transparent color
-            switchCtl.backgroundColor = [UIColor clearColor];
-
-            [switchCtl setAccessibilityLabel:NSLocalizedString(@"StandardSwitch", @"")];
-
-            switchCtl.tag = 1;	// tag this view for later so we can remove it from recycled table cells
-            switchCtl.on = self.task.status;
-            [cell.contentView addSubview:switchCtl];
-        }
-    } else {
-        static NSString* reuseIdentifier = @"TaskDetailsChildTaskCell";
-        cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentifier];
-        if (cell == nil) {
-            cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier] autorelease];
-			cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            cell.textLabel.text = nil;
-            cell.detailTextLabel.text = nil;
-        }
-
-        NSString* label = [NSString stringWithFormat:@"%d child task(s)", 
-                           [[TaskDAO getAllChildTasks:self.task.taskId :self.task.systemId] count]];
-        cell.textLabel.text = label;
-    }
-
-    return cell;
-}
-
 - (NSIndexPath*)tableView:(UITableView*)tableView willSelectRowAtIndexPath:(NSIndexPath*)indexPath {
     if (indexPath.section == 2) {
         return indexPath;
@@ -428,19 +212,12 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 2) {
-        //
-        // push the view controller
-        //
-        TaskTableViewController *childTaskView = [[TaskTableViewController alloc] 
-                                              initWithNibName:@"TaskTableViewController" bundle:nil];
-        childTaskView.dataSource.parentId = self.task.taskId;
-        childTaskView.dataSource.parentSystemId = self.task.systemId;
+        TaskTableViewController *childTaskView = [[[TaskTableViewController alloc] 
+                                              initWithNibName:@"TaskTableViewController" bundle:nil] autorelease];
+        childTaskView.dataSource.parentId = self.dataSource.task.taskId;
+        childTaskView.dataSource.parentSystemId = self.dataSource.task.systemId;
         
-        // 
-        // Pass the selected object to the new view controller.
-        //
         [self.navigationController pushViewController:childTaskView animated:YES];
-        [childTaskView release];
     }
 }
 

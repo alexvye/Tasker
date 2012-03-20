@@ -7,7 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Task.h"
 
 @interface TaskDetailsDataSource : NSObject<UITableViewDataSource>
+
+@property (nonatomic, strong) Task* task;
+@property (nonatomic, strong) NSArray* detailLabels;
+@property (nonatomic, strong) UILabel* repeatLabel;
+
+- (void)initLabels;
 
 @end

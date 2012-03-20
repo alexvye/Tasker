@@ -110,9 +110,8 @@
     self.dataSource.tasks = nil;
 	[self presentModalViewController:filterTask animated:YES];
 }
-#pragma mark -
-#pragma mark Table view delegate
 
+#pragma mark - UITableViewDelegate methods
 - (NSIndexPath *)tableView:(UITableView *)tv willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 0 && [self.dataSource.tasks count] > 0) {
         return indexPath;
@@ -129,7 +128,7 @@
                                                     initWithNibName:@"TaskDetailViewController" bundle:nil] autorelease];
 
         Task* task = (Task*) [self.dataSource.tasks objectAtIndex:[indexPath row]];
-        taskDetailView.task = task;
+        taskDetailView.dataSource.task = task;
         
         self.dataSource.tasks = nil;
         [self.navigationController pushViewController:taskDetailView animated:YES];
