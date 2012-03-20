@@ -12,6 +12,7 @@
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
 		288765FD0DF74451002DB57D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288765FC0DF74451002DB57D /* CoreGraphics.framework */; };
+		B536FDEB15192B8C004B40F1 /* TaskDetailsDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = B536FDEA15192B8C004B40F1 /* TaskDetailsDataSource.m */; };
 		B5A6A01914B90FFB00E3132A /* TaskManager2iPadAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B5A6A01814B90FFB00E3132A /* TaskManager2iPadAppDelegate.m */; };
 		B5A6A01C14B9134D00E3132A /* TaskManager2iPadWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5A6A01B14B9134D00E3132A /* TaskManager2iPadWindow.xib */; };
 		B5BB95721305994600DAB40A /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = B5BB95711305994600DAB40A /* libsqlite3.dylib */; };
@@ -79,6 +80,8 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* TaskManager2_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TaskManager2_Prefix.pch; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* TaskManager2-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "TaskManager2-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
+		B536FDE915192B8C004B40F1 /* TaskDetailsDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TaskDetailsDataSource.h; path = Tasks/TaskDisplay/TaskDataSources/TaskDetailsDataSource.h; sourceTree = "<group>"; };
+		B536FDEA15192B8C004B40F1 /* TaskDetailsDataSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TaskDetailsDataSource.m; path = Tasks/TaskDisplay/TaskDataSources/TaskDetailsDataSource.m; sourceTree = "<group>"; };
 		B5A6A01714B90FFB00E3132A /* TaskManager2iPadAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TaskManager2iPadAppDelegate.h; path = iPad/TaskManager2iPadAppDelegate.h; sourceTree = "<group>"; };
 		B5A6A01814B90FFB00E3132A /* TaskManager2iPadAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TaskManager2iPadAppDelegate.m; path = iPad/TaskManager2iPadAppDelegate.m; sourceTree = "<group>"; };
 		B5A6A01B14B9134D00E3132A /* TaskManager2iPadWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TaskManager2iPadWindow.xib; sourceTree = "<group>"; };
@@ -268,6 +271,8 @@
 			children = (
 				B5C9D83E151783830017525C /* TaskDataSource.h */,
 				B5C9D83F151783830017525C /* TaskDataSource.m */,
+				B536FDE915192B8C004B40F1 /* TaskDetailsDataSource.h */,
+				B536FDEA15192B8C004B40F1 /* TaskDetailsDataSource.m */,
 			);
 			name = TaskDataSources;
 			sourceTree = "<group>";
@@ -526,6 +531,7 @@
 				B5F5AFA81506E65B00C3A135 /* MasterViewController.m in Sources */,
 				B5C9D840151783830017525C /* TaskDataSource.m in Sources */,
 				B5C9D8481517D4950017525C /* TagsDataSource.m in Sources */,
+				B536FDEB15192B8C004B40F1 /* TaskDetailsDataSource.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
