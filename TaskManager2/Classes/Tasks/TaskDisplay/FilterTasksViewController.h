@@ -17,6 +17,7 @@
     BOOL startedFilter;
 }
 
+@property(nonatomic, strong) UIPopoverController* popover;
 @property(nonatomic, retain) IBOutlet UITableView* dataTable;
 @property(nonatomic, retain) NSArray* tags;
 @property(nonatomic, retain) NSString* tagFilter;

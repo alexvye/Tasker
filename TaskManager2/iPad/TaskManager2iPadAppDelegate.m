@@ -9,7 +9,6 @@
 #import "TaskManager2iPadAppDelegate.h"
 #import "MasterViewController.h"
 #import "DetailViewController.h"
-#import "TaskTableViewController.h"
 #import "DataManager.h"
 
 @implementation TaskManager2iPadAppDelegate
@@ -24,8 +23,7 @@
 //    self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
     // Override point for customization after application launch.
     
-//    MasterViewController *masterViewController = [[[MasterViewController alloc] initWithNibName:@"MasterViewController" bundle:nil] autorelease];
-    TaskTableViewController* masterViewController = [[[TaskTableViewController alloc] initWithNibName:@"TaskTableViewController" bundle:nil] autorelease];
+    MasterViewController *masterViewController = [[[MasterViewController alloc] initWithNibName:@"MasterViewController" bundle:nil] autorelease];
     UINavigationController *masterNavigationController = [[[UINavigationController alloc] initWithRootViewController:masterViewController] autorelease];
     
     DetailViewController *detailViewController = [[[DetailViewController alloc] initWithNibName:@"DetailViewController" bundle:nil] autorelease];

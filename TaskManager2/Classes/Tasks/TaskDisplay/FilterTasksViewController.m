@@ -13,6 +13,7 @@
 #import <objc/message.h>
 
 @implementation FilterTasksViewController
+@synthesize popover = _popover;
 @synthesize dataTable;
 @synthesize tags;
 @synthesize tagFilter;
@@ -31,6 +32,7 @@
 }
 
 - (void)dealloc {
+    [_popover release];
     [dataTable release];
     [tags release];
     [tagFilter release];
@@ -43,7 +45,11 @@
 }
 
 - (IBAction)cancelPressed:(id)sender {
-	[self dismissModalViewControllerAnimated:YES];
+    if ([UIDevice currentDevice].model == UIUserInterfaceIdiomPhone ) {
+        [self dismissModalViewControllerAnimated:YES];
+    }  else {
+        [self.popover dismissPopoverAnimated:YES];
+    }
 }
 
 - (IBAction)donePressed:(id)sender {
@@ -52,7 +58,11 @@
     [[NSUserDefaults standardUserDefaults] setBool:self.startedFilter forKey:@"startedFilter"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
-	[self dismissModalViewControllerAnimated:YES];
+    if ([UIDevice currentDevice].model == UIUserInterfaceIdiomPhone ) {
+        [self dismissModalViewControllerAnimated:YES];
+    }  else {
+        [self.popover dismissPopoverAnimated:YES];
+    }
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
