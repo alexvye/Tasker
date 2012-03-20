@@ -12,15 +12,17 @@
 
 @class DetailViewController;
 
-@interface MasterViewController : UIViewController<UITableViewDelegate>
+@interface MasterViewController : UIViewController<UITableViewDelegate, UIPopoverControllerDelegate>
 
 @property (strong, nonatomic) DetailViewController *detailViewController;
 @property (strong, nonatomic) IBOutlet UISegmentedControl* typeSelect;
 @property (strong, nonatomic) IBOutlet UITableView* dataTable;
+@property (strong, nonatomic) IBOutlet UIBarButtonItem* filterButton;
 @property (strong, nonatomic) TaskDataSource* taskDataSource;
 @property (strong, nonatomic) TagsDataSource* tagDataSource;
 @property (nonatomic, strong) UIPopoverController* filterPopover;
 
+- (IBAction)insertNewObject:(id)sender;
 - (IBAction)typeChange:(id)sender;
 - (IBAction)changeFilter:(id)sender;
 

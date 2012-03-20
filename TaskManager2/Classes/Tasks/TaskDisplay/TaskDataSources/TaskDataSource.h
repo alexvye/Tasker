@@ -17,6 +17,7 @@
 @property (nonatomic, assign) int statusFilter;
 @property (nonatomic, assign) BOOL startedFilter;
 
--(void)loadState;
+- (void)loadTasks;
+- (void)loadState;
 
 @end

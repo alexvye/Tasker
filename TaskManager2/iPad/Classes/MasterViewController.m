@@ -15,6 +15,7 @@
 @synthesize detailViewController = _detailViewController;
 @synthesize typeSelect = _typeSelect;
 @synthesize dataTable = _dataTable;
+@synthesize filterButton = _filterButton;
 @synthesize taskDataSource = _taskDataSource;
 @synthesize tagDataSource = _tagDataSource;
 @synthesize filterPopover = _filterPopover;
@@ -41,7 +42,9 @@
 - (void)dealloc
 {
     [_detailViewController release];
+    [_typeSelect release];
     [_dataTable release];
+    [_filterButton release];
     [_taskDataSource release];
     [_tagDataSource release];
     [_filterPopover release];
@@ -67,10 +70,15 @@
     self.dataTable.dataSource = self.taskDataSource;
     [self.taskDataSource loadState];
 
-    self.navigationItem.leftBarButtonItem = self.editButtonItem;
+//    self.navigationItem.leftBarButtonItem = self.editButtonItem;
 
     UIBarButtonItem *addButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)] autorelease];
     self.navigationItem.rightBarButtonItem = addButton;
+}
+
+- (void)viewWillUnload {
+    [super viewWillUnload];
+    [self.dataTable reloadData];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -80,6 +88,14 @@
 }
 
 #pragma mark - UI event methods
+- (IBAction)insertNewObject:(id)sender {
+    if (self.typeSelect.selectedSegmentIndex == 0) {
+        NSLog(@"TASK ADD");
+    } else {
+        NSLog(@"TAG ADD");
+    }
+}
+
 - (IBAction)typeChange:(id)sender {
     if (self.typeSelect.selectedSegmentIndex == 0) {
         self.dataTable.dataSource = self.taskDataSource;
@@ -107,12 +123,53 @@
         
         self.filterPopover = [[[UIPopoverController alloc] initWithContentViewController:ftvc] autorelease];
         self.filterPopover.popoverContentSize = ftvc.view.frame.size;
+        self.filterPopover.delegate = self;
         ftvc.popover = self.filterPopover;
         [self.filterPopover presentPopoverFromBarButtonItem:sender 
                                         permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
 
     
     }
+}
+
+#pragma mark - UITableViewDelegate methods
+
+- (NSIndexPath *)tableView:(UITableView *)tv willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.typeSelect.selectedSegmentIndex == 0) {
+        [self.taskDataSource loadTasks];
+        if (indexPath.section == 0 && self.taskDataSource.tasks.count > 0) {
+            return indexPath;
+        } else if (indexPath.section == 1 && indexPath.row == 0) {
+            return indexPath;
+        }
+        
+        return nil;
+    } else {
+        return indexPath;
+    }
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.typeSelect.selectedSegmentIndex == 0) {
+        [self.taskDataSource loadTasks];
+        if (indexPath.section == 0 && self.taskDataSource.tasks.count > indexPath.row) {
+            Task* task = (Task*) [self.taskDataSource.tasks objectAtIndex:[indexPath row]];
+            MasterViewController* mvc = [[[MasterViewController alloc] initWithNibName:@"MasterViewController" bundle:nil] autorelease];
+            mvc.taskDataSource.parentId = task.taskId;
+            mvc.taskDataSource.parentSystemId = task.systemId;
+            self.taskDataSource.tasks = nil;
+            [self.navigationController pushViewController:mvc animated:YES];
+        } else if (indexPath.section == 1 && indexPath.row == 0) {
+            [self changeFilter:self.filterButton];
+        }
+    }
+}
+
+#pragma mark - UIPopoverControllerDelegate methods
+- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController {
+    self.taskDataSource.tasks = nil;
+    self.tagDataSource.tags = nil;
+    [self.dataTable reloadData];
 }
 
 @end

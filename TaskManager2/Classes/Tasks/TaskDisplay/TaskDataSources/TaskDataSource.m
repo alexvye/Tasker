@@ -275,5 +275,10 @@
     self.startedFilter = startFilter;
 }
 
+- (void)loadTasks {
+    if (self.tasks == nil) {
+        [self setupFilteredTasks];
+    }
+}
 
 @end
