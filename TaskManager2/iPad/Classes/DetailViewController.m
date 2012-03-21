@@ -137,6 +137,10 @@
 
 #pragma mark - UITableViewDataSource methods
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.dataSource.task == nil) {
+        return tableView.rowHeight;
+    }
+    
 	if (indexPath.section == 0) {
 		if (indexPath.row == 0) {
             float height = 20.0f;

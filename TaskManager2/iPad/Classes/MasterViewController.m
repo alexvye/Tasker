@@ -20,6 +20,7 @@
 @synthesize taskDataSource = _taskDataSource;
 @synthesize tagDataSource = _tagDataSource;
 @synthesize filterPopover = _filterPopover;
+@synthesize selectedTask = _selectedTask;
 
 
 #pragma mark - UIViewController methods
@@ -49,6 +50,7 @@
     [_taskDataSource release];
     [_tagDataSource release];
     [_filterPopover release];
+    [_selectedTask release];
     [super dealloc];
 }
 
@@ -80,6 +82,7 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.dataTable reloadData];
+     [self.detailViewController setDetailItem:self.selectedTask]; 
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -160,9 +163,11 @@
             MasterViewController* mvc = [[[MasterViewController alloc] initWithNibName:@"MasterViewController" bundle:nil] autorelease];
             mvc.taskDataSource.parentId = task.taskId;
             mvc.taskDataSource.parentSystemId = task.systemId;
+            mvc.selectedTask = task;
             self.taskDataSource.tasks = nil;
             [self.navigationController pushViewController:mvc animated:YES];
         } else if (indexPath.section == 1 && indexPath.row == 0) {
+            [tableView deselectRowAtIndexPath:indexPath animated:NO];
             [self changeFilter:self.filterButton];
         }
     }

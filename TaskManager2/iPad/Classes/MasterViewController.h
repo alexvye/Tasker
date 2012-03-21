@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "TaskDataSource.h"
 #import "TagsDataSource.h"
+#import "Task.h"
 
 @class DetailViewController;
 
@@ -21,6 +22,7 @@
 @property (strong, nonatomic) TaskDataSource* taskDataSource;
 @property (strong, nonatomic) TagsDataSource* tagDataSource;
 @property (nonatomic, strong) UIPopoverController* filterPopover;
+@property (nonatomic, strong) Task* selectedTask;
 
 - (IBAction)insertNewObject:(id)sender;
 - (IBAction)typeChange:(id)sender;
