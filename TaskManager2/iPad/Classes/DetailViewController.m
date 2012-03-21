@@ -136,7 +136,6 @@
 }
 
 #pragma mark - UITableViewDataSource methods
-
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
 	if (indexPath.section == 0) {
 		if (indexPath.row == 0) {
@@ -146,15 +145,22 @@
             }
             return height;
         } else if (indexPath.row == 1 && [CommonUI getNotificationForTask:self.dataSource.task] != nil) {
-            return 60.0;
+            return tableView.rowHeight;
 		} else {
-            UILabel* label = self.dataSource.repeatLabel;
-            return label.bounds.size.height + 20.0f;
+            CGRect frame = self.dataSource.repeatLabel.frame;
+            frame.size = tableView.contentSize;
+            self.dataSource.repeatLabel.frame = frame;
+            [self.dataSource.repeatLabel sizeToFit];
+            
+            return self.dataSource.repeatLabel.frame.size.height + 20.0f;
 		}
 	} else {
-		return 60.0;
+		return tableView.rowHeight;
 	}
 }
 
+- (NSIndexPath*)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    return nil;
+}
 
 @end

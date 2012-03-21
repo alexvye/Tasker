@@ -10,6 +10,7 @@
 #import "DetailViewController.h"
 #import "FilterTasksViewController.h"
 #import "Task.h"
+#import "TaskDAO.h"
 
 @implementation MasterViewController
 @synthesize detailViewController = _detailViewController;
@@ -76,8 +77,8 @@
     self.navigationItem.rightBarButtonItem = addButton;
 }
 
-- (void)viewWillUnload {
-    [super viewWillUnload];
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     [self.dataTable reloadData];
 }
 

@@ -16,7 +16,7 @@
 
 @implementation TaskDetailViewController
 @synthesize dataSource = _dataSource;
-@synthesize dataTable;
+@synthesize dataTable = _dataTable;
 
 #pragma mark - UIViewController Methods
 
@@ -38,7 +38,7 @@
 
 - (void)dealloc {
     [_dataSource release];
-	[dataTable release];
+	[_dataTable release];
     [super dealloc];
 }
 
@@ -72,6 +72,10 @@
 
 #pragma mark - UITableViewDataSource methods
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.dataSource.task == nil) {
+        return tableView.rowHeight;
+    }
+    
 	if (indexPath.section == 0) {
 		if (indexPath.row == 0) {
             float height = 20.0f;
@@ -80,15 +84,20 @@
             }
             return height;
         } else if (indexPath.row == 1 && [CommonUI getNotificationForTask:self.dataSource.task] != nil) {
-            return 60.0;
+            return tableView.rowHeight;
 		} else {
-            UILabel* label = self.dataSource.repeatLabel;
-            return label.bounds.size.height + 20.0f;
+            CGRect frame = self.dataSource.repeatLabel.frame;
+            frame.size = tableView.contentSize;
+            self.dataSource.repeatLabel.frame = frame;
+            [self.dataSource.repeatLabel sizeToFit];
+            
+            return self.dataSource.repeatLabel.frame.size.height + 20.0f;
 		}
 	} else {
-		return 60.0;
+		return tableView.rowHeight;
 	}
 }
+
 - (NSIndexPath*)tableView:(UITableView*)tableView willSelectRowAtIndexPath:(NSIndexPath*)indexPath {
     if (indexPath.section == 2) {
         return indexPath;

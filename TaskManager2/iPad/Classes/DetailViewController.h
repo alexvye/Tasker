@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "TaskDetailsDataSource.h"
 
-@interface DetailViewController : UIViewController <UISplitViewControllerDelegate, UITableViewDataSource>
+@interface DetailViewController : UIViewController <UISplitViewControllerDelegate, UITableViewDelegate>
 
 @property (strong, nonatomic) id detailItem;
 @property (strong, nonatomic) TaskDetailsDataSource* dataSource;

@@ -156,6 +156,10 @@
 - (NSArray*)getDetailLabels {
 	CGRect frame = CGRectMake(20.0f, 10.0f, 280.0f, 20.0f);
     NSMutableArray* labels = [[[NSMutableArray alloc] init] autorelease];
+    if (self.task == nil) {
+        return labels;
+    }
+    
 	if (self.task.title != nil && self.task.title.length > 0) {
         UILabel* titleLabel = [self getUILabel:self.task.title frame:frame andFont:[UIFont boldSystemFontOfSize:17]];
         [labels addObject:titleLabel];
@@ -238,7 +242,7 @@
 #pragma mark - UITableViewDataSource Methods
 - (NSInteger)numberOfSectionsInTableView:(UITableView*)tableView {
     self.dataTable = tableView;
-	return 3;
+	return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) ? 3 : 2;
 }
 
 - (NSInteger)tableView:(UITableView*)tableView numberOfRowsInSection:(NSInteger)section {

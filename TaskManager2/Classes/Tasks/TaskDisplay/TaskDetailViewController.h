@@ -10,12 +10,9 @@
 #import "Task.h"
 #import "TaskDetailsDataSource.h"
 
-@interface TaskDetailViewController : UIViewController<UITableViewDataSource> {
-	UITableView* dataTable;
-}
-
-@property(nonatomic, retain) TaskDetailsDataSource* dataSource;
-@property(nonatomic, retain) IBOutlet UITableView* dataTable;
+@interface TaskDetailViewController : UIViewController<UITableViewDelegate>
+@property(nonatomic, strong) TaskDetailsDataSource* dataSource;
+@property(nonatomic, strong) IBOutlet UITableView* dataTable;
 
 - (IBAction)editTask:(id)sender;
 
