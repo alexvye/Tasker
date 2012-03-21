@@ -7,11 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TaskDetailsDataSource.h"
 
-@interface DetailViewController : UIViewController <UISplitViewControllerDelegate>
+@interface DetailViewController : UIViewController <UISplitViewControllerDelegate, UITableViewDataSource>
 
 @property (strong, nonatomic) id detailItem;
-
-@property (strong, nonatomic) IBOutlet UILabel *detailDescriptionLabel;
+@property (strong, nonatomic) TaskDetailsDataSource* dataSource;
+@property (strong, nonatomic) IBOutlet UITableView *dataTable;
 
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "DetailViewController.h"
+#import "CommonUI.h"
 
 @interface DetailViewController ()
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
@@ -16,13 +17,15 @@
 @implementation DetailViewController
 
 @synthesize detailItem = _detailItem;
-@synthesize detailDescriptionLabel = _detailDescriptionLabel;
+@synthesize dataSource = _dataSource;
+@synthesize dataTable = _dataTable;
 @synthesize masterPopoverController = _masterPopoverController;
 
 - (void)dealloc
 {
     [_detailItem release];
-    [_detailDescriptionLabel release];
+    [_dataSource release];
+    [_dataTable release];
     [_masterPopoverController release];
     [super dealloc];
 }
@@ -47,9 +50,13 @@
 - (void)configureView
 {
     // Update the user interface for the detail item.
+    self.dataSource.task = self.detailItem;
+    [self.dataSource initLabels];
+    [self.dataTable reloadData];
 
     if (self.detailItem) {
-        self.detailDescriptionLabel.text = [self.detailItem description];
+        self.dataSource.task = self.detailItem;
+        [self.dataTable reloadData];
     }
 }
 
@@ -64,6 +71,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.dataTable.dataSource = self.dataSource;
 	// Do any additional setup after loading the view, typically from a nib.
     [self configureView];
 }
@@ -106,6 +114,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         self.title = NSLocalizedString(@"Details", @"Details");
+        self.dataSource = [[[TaskDetailsDataSource alloc] init] autorelease];
     }
     return self;
 }
@@ -125,5 +134,27 @@
     [self.navigationItem setLeftBarButtonItem:nil animated:YES];
     self.masterPopoverController = nil;
 }
+
+#pragma mark - UITableViewDataSource methods
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+	if (indexPath.section == 0) {
+		if (indexPath.row == 0) {
+            float height = 20.0f;
+            for (UILabel* label in self.dataSource.detailLabels) {
+                height += label.bounds.size.height;
+            }
+            return height;
+        } else if (indexPath.row == 1 && [CommonUI getNotificationForTask:self.dataSource.task] != nil) {
+            return 60.0;
+		} else {
+            UILabel* label = self.dataSource.repeatLabel;
+            return label.bounds.size.height + 20.0f;
+		}
+	} else {
+		return 60.0;
+	}
+}
+
 
 @end

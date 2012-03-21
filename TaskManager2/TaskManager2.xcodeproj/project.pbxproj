@@ -308,7 +308,6 @@
 				B5F5AF5D1506E2D400C3A135 /* TaskModify */,
 				B5F5AF3E1506DB6300C3A135 /* TaskDisplay */,
 				B5F5AF3F1506DB9C00C3A135 /* DataManager.h */,
-				B5F5AF401506DB9C00C3A135 /* DataManager.m */,
 				B5F5AF411506DB9C00C3A135 /* Task.h */,
 				B5F5AF421506DB9C00C3A135 /* Task.m */,
 				B5F5AF431506DB9C00C3A135 /* TaskDAO.h */,
@@ -330,6 +329,7 @@
 				B5F5AF571506E11900C3A135 /* FilterTasksViewController.h */,
 				B5F5AF581506E11900C3A135 /* FilterTasksViewController.m */,
 				B5F5AF591506E11900C3A135 /* FilterTasksViewController.xib */,
+				B5F5AF401506DB9C00C3A135 /* DataManager.m */,
 			);
 			name = TaskDisplay;
 			sourceTree = "<group>";

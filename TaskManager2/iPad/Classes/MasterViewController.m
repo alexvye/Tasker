@@ -154,6 +154,8 @@
         [self.taskDataSource loadTasks];
         if (indexPath.section == 0 && self.taskDataSource.tasks.count > indexPath.row) {
             Task* task = (Task*) [self.taskDataSource.tasks objectAtIndex:[indexPath row]];
+            [self.detailViewController setDetailItem:task]; 
+            
             MasterViewController* mvc = [[[MasterViewController alloc] initWithNibName:@"MasterViewController" bundle:nil] autorelease];
             mvc.taskDataSource.parentId = task.taskId;
             mvc.taskDataSource.parentSystemId = task.systemId;
