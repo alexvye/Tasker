@@ -13,14 +13,6 @@
 #import "TaskDAO.h"
 #import "CommonUI.h"
 
-@interface TaskDetailViewController () 
-
-- (int)getNextDayInterval:(int)mask forDate:(NSDate*)date;
-- (void)updateChildTasks:(Task*)updateTask;
-- (NSDate*)mergeDateWithTime:(NSDate*)time andDate:(NSDate*)date;
-
-@end
-
 
 @implementation TaskDetailViewController
 @synthesize dataSource = _dataSource;
@@ -69,46 +61,6 @@
     }
 }
 
-#pragma mark - Private Methods
-
-- (int)getNextDayInterval:(int)mask forDate:(NSDate*)date {
-    // Get day of week: Sunday = 1, Monday = 2, etc
-    int weekday = [[[NSCalendar currentCalendar] components:NSWeekdayCalendarUnit fromDate:date] weekday];
-    int firstDay = weekday - 1;
-    
-    for (int i = 0; i < 7; i++, weekday++) {
-        int weekdayMask = 1 << ((weekday < 7) ? weekday : weekday - 7);
-        if ((mask & weekdayMask) == weekdayMask) {
-            break;
-        }
-        
-    }
-    
-    return weekday - firstDay;
-}
-
-- (void)updateChildTasks:(Task*)updateTask {
-    NSArray* childTasks = [TaskDAO getAllChildTasks:updateTask.taskId :updateTask.systemId];
-    for (Task* childTask in childTasks) {
-        childTask.startDate = updateTask.startDate;
-        childTask.endDate = updateTask.endDate;
-        childTask.status = updateTask.status;
-        [TaskDAO updateTask:childTask];
-        [self updateChildTasks:childTask];
-    }
-}
-
-- (NSDate*)mergeDateWithTime:(NSDate*)time andDate:(NSDate*)date {
-    NSCalendar *gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
-
-    NSDateComponents* timeComp = [gregorian components:(NSHourCalendarUnit | NSMinuteCalendarUnit |  NSSecondCalendarUnit) fromDate:time];
-    NSDateComponents *dateComp = [gregorian components:(NSYearCalendarUnit | NSMonthCalendarUnit |  NSDayCalendarUnit) fromDate:date];            
-    [dateComp setHour:[timeComp hour]];
-    [dateComp setMinute:[timeComp minute]];
-    [dateComp setSecond:[timeComp second]];
-    return [gregorian dateFromComponents:dateComp];
-}
-
 #pragma mark - UI Event Methods
 
 - (IBAction)editTask:(id)sender {
@@ -116,72 +68,6 @@
 										  initWithNibName:@"TaskAddViewController" bundle:nil] autorelease];
 	taskAddView.task = self.dataSource.task;
 	[self presentModalViewController:taskAddView animated:YES];
-}
-
-- (IBAction)taskCompleted:(id)sender {
-    UILocalNotification* notification = [CommonUI getNotificationForTask:self.dataSource.task];
-    
-    if ([sender class] == [UISwitch class]) {
-        UISwitch* completeSwitch = (UISwitch*) sender;
-        if (self.dataSource.task.parentId != NO_PARENT || self.dataSource.task.recurranceType == NONE) {
-            self.dataSource.task.status = completeSwitch.on;
-            [TaskDAO updateTaskStatus:self.dataSource.task.taskId :self.dataSource.task.systemId :self.dataSource.task.status];
-            if (completeSwitch.on && notification != nil) {
-                [CommonUI cancelNotificationForTask:self.dataSource.task];
-            }
-        } else if (self.dataSource.task.recurranceType == DAILY) {
-            if (completeSwitch.on) {
-                completeSwitch.on = NO;
-                int daysToAdd = [self getNextDayInterval:self.dataSource.task.recurranceValue forDate:self.dataSource.task.endDate];
-                NSCalendar *gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
-                NSDateComponents *comps = [[[NSDateComponents alloc] init] autorelease];
-                [comps setDay:daysToAdd];
-                self.dataSource.task.startDate = [gregorian dateByAddingComponents:comps toDate:self.dataSource.task.endDate  options:0];
-                self.dataSource.task.endDate = self.dataSource.task.startDate;
-                [TaskDAO updateTask:self.dataSource.task];
-                [self.dataTable reloadData];
-                
-                if (notification != nil) {
-                    notification.fireDate = [self mergeDateWithTime:notification.fireDate andDate:self.dataSource.task.endDate];
-                }
-            }
-        } else if (self.dataSource.task.recurranceType == WEEKLY) {
-            if (completeSwitch.on) {
-                completeSwitch.on = NO;
-                NSCalendar *gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
-                NSDateComponents *comps = [[[NSDateComponents alloc] init] autorelease];
-                [comps setDay:1];
-                self.dataSource.task.startDate = [gregorian dateByAddingComponents:comps toDate:self.dataSource.task.endDate  options:0];
-                [comps setDay:self.dataSource.task.recurranceValue * 7];
-                self.dataSource.task.endDate = [gregorian dateByAddingComponents:comps toDate:self.dataSource.task.endDate  options:0];
-                [TaskDAO updateTask:self.dataSource.task];
-                [self.dataTable reloadData];
-                
-                if (notification != nil) {
-                    notification.fireDate = [self mergeDateWithTime:notification.fireDate andDate:self.dataSource.task.endDate];
-                }
-            }
-        } else if (self.dataSource.task.recurranceType == MONTHLY) {
-            if (completeSwitch.on) {
-                completeSwitch.on = NO;
-                NSCalendar *gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
-                NSDateComponents *comps = [[[NSDateComponents alloc] init] autorelease];
-                [comps setDay:1];
-                self.dataSource.task.startDate = [gregorian dateByAddingComponents:comps toDate:self.dataSource.task.endDate  options:0];
-                [comps setDay:0];
-                [comps setMonth:self.dataSource.task.recurranceValue];
-                self.dataSource.task.endDate = [gregorian dateByAddingComponents:comps toDate:self.dataSource.task.endDate  options:0];
-                [TaskDAO updateTask:self.dataSource.task];
-                [self.dataTable reloadData];
-                
-                if (notification != nil) {
-                    notification.fireDate = [self mergeDateWithTime:notification.fireDate andDate:self.dataSource.task.endDate];
-                }
-            }
-        }
-        [self updateChildTasks:self.dataSource.task];
-    }
-
 }
 
 #pragma mark - UITableViewDataSource methods

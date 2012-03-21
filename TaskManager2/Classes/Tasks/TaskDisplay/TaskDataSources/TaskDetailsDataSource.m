@@ -11,6 +11,9 @@
 #import "TaskDAO.h"
 
 @interface TaskDetailsDataSource ()
+- (int)getNextDayInterval:(int)mask forDate:(NSDate*)date;
+- (void)updateChildTasks:(Task*)updateTask;
+- (NSDate*)mergeDateWithTime:(NSDate*)time andDate:(NSDate*)date;
 - (UILabel*)getUILabel:(NSString*)text frame:(CGRect)frame andFont:(UIFont*)font;
 - (NSArray*)getDetailLabels;
 - (UILabel*)getRepeatLabel;
@@ -20,12 +23,120 @@
 @synthesize task = _task;
 @synthesize detailLabels = _detailLabels;
 @synthesize repeatLabel = _repeatLabel;
+@synthesize dataTable = _dataTable;
 
 - (void)dealloc {
     [_task release];
     [_detailLabels release];
     [_repeatLabel release];
+    [_dataTable release];
     [super dealloc];
+}
+
+- (int)getNextDayInterval:(int)mask forDate:(NSDate*)date {
+    // Get day of week: Sunday = 1, Monday = 2, etc
+    int weekday = [[[NSCalendar currentCalendar] components:NSWeekdayCalendarUnit fromDate:date] weekday];
+    int firstDay = weekday - 1;
+    
+    for (int i = 0; i < 7; i++, weekday++) {
+        int weekdayMask = 1 << ((weekday < 7) ? weekday : weekday - 7);
+        if ((mask & weekdayMask) == weekdayMask) {
+            break;
+        }
+        
+    }
+    
+    return weekday - firstDay;
+}
+
+- (void)updateChildTasks:(Task*)updateTask {
+    NSArray* childTasks = [TaskDAO getAllChildTasks:updateTask.taskId :updateTask.systemId];
+    for (Task* childTask in childTasks) {
+        childTask.startDate = updateTask.startDate;
+        childTask.endDate = updateTask.endDate;
+        childTask.status = updateTask.status;
+        [TaskDAO updateTask:childTask];
+        [self updateChildTasks:childTask];
+    }
+}
+
+- (NSDate*)mergeDateWithTime:(NSDate*)time andDate:(NSDate*)date {
+    NSCalendar *gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+    
+    NSDateComponents* timeComp = [gregorian components:(NSHourCalendarUnit | NSMinuteCalendarUnit |  NSSecondCalendarUnit) fromDate:time];
+    NSDateComponents *dateComp = [gregorian components:(NSYearCalendarUnit | NSMonthCalendarUnit |  NSDayCalendarUnit) fromDate:date];            
+    [dateComp setHour:[timeComp hour]];
+    [dateComp setMinute:[timeComp minute]];
+    [dateComp setSecond:[timeComp second]];
+    return [gregorian dateFromComponents:dateComp];
+}
+
+
+- (IBAction)taskCompleted:(id)sender {
+    if ([sender isKindOfClass:[UISwitch class]]) {
+        UISwitch* completeSwitch = (UISwitch*) sender;
+        UILocalNotification* notification = [CommonUI getNotificationForTask:self.task];
+
+        if (self.task.recurranceType == NONE) {
+            self.task.status = completeSwitch.on;
+        } else if (self.task.recurranceType == DAILY) {
+            if (completeSwitch.on) {
+                completeSwitch.on = NO;
+                NSCalendar *gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+                NSDateComponents *comps = [[[NSDateComponents alloc] init] autorelease];
+
+                int daysToAdd = [self getNextDayInterval:self.task.recurranceValue forDate:self.task.endDate];
+                [comps setDay:daysToAdd];
+                self.task.startDate = [gregorian dateByAddingComponents:comps toDate:self.task.endDate options:0];
+                self.task.endDate = self.task.startDate;
+                [TaskDAO updateTask:self.task];
+                
+                if (notification != nil) {
+                    notification.fireDate = [self mergeDateWithTime:notification.fireDate andDate:self.task.endDate];
+                }
+                [self.dataTable reloadData];
+            }
+        } else if (self.task.recurranceType == WEEKLY) {
+            if (completeSwitch.on) {
+                completeSwitch.on = NO;
+                NSCalendar *gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+                NSDateComponents *comps = [[[NSDateComponents alloc] init] autorelease];
+                [comps setDay:1];
+                self.task.startDate = [gregorian dateByAddingComponents:comps toDate:self.task.endDate options:0];
+                [comps setDay:self.task.recurranceValue * 7];
+                self.task.endDate = [gregorian dateByAddingComponents:comps toDate:self.task.endDate options:0];
+                [TaskDAO updateTask:self.task];                
+                if (notification != nil) {
+                    notification.fireDate = [self mergeDateWithTime:notification.fireDate andDate:self.task.endDate];
+                }
+                [self.dataTable reloadData];
+            }
+        } else if (self.task.recurranceType == MONTHLY) {
+            if (completeSwitch.on) {
+                completeSwitch.on = NO;
+                NSCalendar *gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+                NSDateComponents *comps = [[[NSDateComponents alloc] init] autorelease];
+                [comps setDay:1];
+                self.task.startDate = [gregorian dateByAddingComponents:comps toDate:self.task.endDate options:0];
+                [comps setDay:0];
+                [comps setMonth:self.task.recurranceValue];
+                self.task.endDate = [gregorian dateByAddingComponents:comps toDate:self.task.endDate options:0];
+                [TaskDAO updateTask:self.task];
+                
+                if (notification != nil) {
+                    notification.fireDate = [self mergeDateWithTime:notification.fireDate andDate:self.task.endDate];
+                }
+                [self.dataTable reloadData];
+            }
+        }
+
+        [TaskDAO updateTaskStatus:self.task.taskId :self.task.systemId :self.task.status];
+        [self updateChildTasks:self.task];
+        if (completeSwitch.on && notification != nil) {
+            [CommonUI cancelNotificationForTask:self.task];
+        }
+   }
+    
 }
 
 #pragma mark - Private methods
@@ -126,6 +237,7 @@
 
 #pragma mark - UITableViewDataSource Methods
 - (NSInteger)numberOfSectionsInTableView:(UITableView*)tableView {
+    self.dataTable = tableView;
 	return 3;
 }
 

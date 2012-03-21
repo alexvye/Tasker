@@ -18,6 +18,5 @@
 @property(nonatomic, retain) IBOutlet UITableView* dataTable;
 
 - (IBAction)editTask:(id)sender;
-- (IBAction)taskCompleted:(id)sender;
 
 @end

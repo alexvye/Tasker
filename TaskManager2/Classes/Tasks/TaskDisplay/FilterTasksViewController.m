@@ -45,7 +45,7 @@
 }
 
 - (IBAction)cancelPressed:(id)sender {
-    if ([UIDevice currentDevice].model == UIUserInterfaceIdiomPhone ) {
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) {
         [self dismissModalViewControllerAnimated:YES];
     }  else {
         [self.popover dismissPopoverAnimated:YES];
@@ -58,7 +58,7 @@
     [[NSUserDefaults standardUserDefaults] setBool:self.startedFilter forKey:@"startedFilter"];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
-    if ([UIDevice currentDevice].model == UIUserInterfaceIdiomPhone ) {
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) {
         [self dismissModalViewControllerAnimated:YES];
     }  else {
         [self.popover dismissPopoverAnimated:YES];

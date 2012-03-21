@@ -14,7 +14,9 @@
 @property (nonatomic, strong) Task* task;
 @property (nonatomic, strong) NSArray* detailLabels;
 @property (nonatomic, strong) UILabel* repeatLabel;
+@property (nonatomic, strong) UITableView* dataTable;
 
+- (IBAction)taskCompleted:(id)sender;
 - (void)initLabels;
 
 @end
