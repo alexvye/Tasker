@@ -14,7 +14,6 @@
 @end
 
 @implementation TaskDataSource
-@synthesize tasks = _tasks;
 @synthesize parentId = _parentId;
 @synthesize parentSystemId = _parentSystemId;
 @synthesize tagFilter = _tagFilter;
@@ -24,7 +23,6 @@
 @synthesize filtered = _filtered;
 
 - (void)dealloc {
-    [_tasks release];
     [_parentSystemId release];
     [_tagFilter release];
     [super dealloc];
@@ -246,14 +244,6 @@
         self.statusFilter = 2;
     }    
     self.startedFilter = startFilter;
-}
-
-- (void)loadTasks {
-    /*
-    if (self.tasks == nil) {
-        [self setupFilteredTasks];
-    }
-     */
 }
 
 @end

@@ -66,7 +66,6 @@
 {
     [super didReceiveMemoryWarning];
     // Release any cached data, images, etc that aren't in use.
-    self.taskDataSource.tasks = nil;
     self.tagDataSource.tags = nil;
     if (self.filterPopover != nil && ![self.filterPopover isPopoverVisible]) {
         self.filterPopover = nil;
@@ -95,7 +94,6 @@
     } else {
         [self.detailViewController setDetailItem:self.selectedTask];
         [self.taskDataSource loadState];
-        [self.taskDataSource loadTasks];
         if (self.typeSelect.segmentedControlStyle == 0) {
             [self.dataTable reloadData];
         }
@@ -157,8 +155,7 @@
 
 - (NSIndexPath *)tableView:(UITableView *)tv willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (self.typeSelect.selectedSegmentIndex == 0) {
-        [self.taskDataSource loadTasks];
-        if (indexPath.section == 0 && self.taskDataSource.tasks.count > 0) {
+        if (indexPath.section == 0 && self.taskDataSource.count > 0) {
             return indexPath;
         } else if (indexPath.section == 1 && indexPath.row == 0) {
             return indexPath;
@@ -172,16 +169,15 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (self.typeSelect.selectedSegmentIndex == 0) {
-        [self.taskDataSource loadTasks];
-        if (indexPath.section == 0 && self.taskDataSource.tasks.count > indexPath.row) {
-            Task* task = (Task*) [self.taskDataSource.tasks objectAtIndex:[indexPath row]];
+        if (indexPath.section == 0 && self.taskDataSource.count > indexPath.row) {
+            Task* task = [TaskDAO getFilteredTaskFor:indexPath.row parentId:self.taskDataSource.parentId parentSystemId:self.taskDataSource.parentSystemId forTag:self.taskDataSource.tagFilter status:self.taskDataSource.statusFilter andStarted:self.taskDataSource.startedFilter];
             [self.detailViewController setDetailItem:task]; 
             
             MasterViewController* mvc = [[[MasterViewController alloc] initWithNibName:@"MasterViewController" bundle:nil] autorelease];
             mvc.taskDataSource.parentId = task.taskId;
             mvc.taskDataSource.parentSystemId = task.systemId;
             mvc.selectedTask = task;
-            self.taskDataSource.tasks = nil;
+
             [self.navigationController pushViewController:mvc animated:YES];
         } else if (indexPath.section == 1 && indexPath.row == 0) {
             [tableView deselectRowAtIndexPath:indexPath animated:NO];
@@ -192,10 +188,7 @@
 
 #pragma mark - UIPopoverControllerDelegate methods
 - (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController {
-    NSLog(@"TEST");
-    self.taskDataSource.tasks = nil;
     [self.taskDataSource loadState];
-    [self.taskDataSource loadTasks];
     if (self.typeSelect.segmentedControlStyle == 0) {
         [self.dataTable reloadData];
     }    

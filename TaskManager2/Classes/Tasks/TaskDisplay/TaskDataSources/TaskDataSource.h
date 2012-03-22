@@ -10,7 +10,6 @@
 
 @interface TaskDataSource : NSObject<UITableViewDataSource>
 
-@property (nonatomic, strong) NSArray* tasks;
 @property (nonatomic, assign) int parentId;
 @property (nonatomic, strong) NSString* parentSystemId;
 @property (nonatomic, strong) NSString* tagFilter;
@@ -19,7 +18,6 @@
 @property (nonatomic, assign) int count;
 @property (nonatomic, assign) BOOL filtered;
 
-- (void)loadTasks;
 - (void)loadState;
 
 @end

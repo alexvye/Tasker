@@ -96,7 +96,6 @@
     taskAddView.parentId = self.dataSource.parentId;
     taskAddView.parentSystemId = self.dataSource.parentSystemId;
 
-    self.dataSource.tasks = nil;
 	[self presentModalViewController:taskAddView animated:YES];
 }
 
@@ -108,7 +107,6 @@
                                              statusFilter:self.dataSource.statusFilter
                                              startFilter:self.dataSource.startedFilter] autorelease];
 	
-    self.dataSource.tasks = nil;
 	[self presentModalViewController:filterTask animated:YES];
 }
 
@@ -137,14 +135,6 @@
 }
 
 #pragma mark - Memory management methods
-
-- (void)didReceiveMemoryWarning {
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    
-    // Relinquish ownership any cached data, images, etc that aren't in use.
-    self.dataSource.tasks = nil;
-}
 
 - (void)dealloc {
 	[dataTable release];
