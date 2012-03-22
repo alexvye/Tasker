@@ -20,6 +20,8 @@
 @synthesize tagFilter = _tagFilter;
 @synthesize statusFilter = _statusFilter;
 @synthesize startedFilter = _startedFilter;
+@synthesize count = _count;
+@synthesize filtered = _filtered;
 
 - (void)dealloc {
     [_tasks release];
@@ -30,6 +32,7 @@
 
 #pragma mark - Private methods
 - (void)setupFilteredTasks {
+/*
     // Get all tasks for the status filter.
     NSArray* tmpTasks;
     if (self.statusFilter == TASK_STATUS_ALL) {
@@ -54,19 +57,21 @@
         }
         self.tasks = postFilteredTasks;
     }
-    
+*/    
 }
 
 #pragma mark - UITableViewDataSource methods
-
 - (NSString*)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    if ((self.tagFilter != nil || self.statusFilter != 2) && section == 1) {
+    if (section == 1 && self.filtered) {
         return @"Filter";
     }
     return nil;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    self.count = [TaskDAO getFilteredTaskCountForParentId:self.parentId parentSystemId:self.parentSystemId forTag:self.tagFilter status:self.statusFilter andStarted:self.startedFilter];
+    self.filtered = self.tagFilter != nil || self.statusFilter != 2 || self.startedFilter;
+
     if (self.tagFilter != nil || self.statusFilter != 2 || self.startedFilter) {
         return 2;
     } else {
@@ -75,13 +80,8 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (self.tasks == nil) {
-        [self setupFilteredTasks];
-    }
-
     if (section == 0) {
-        int count = [self.tasks count];
-        return (count > 0) ? count : 1;
+        return (self.count > 0) ? self.count : 1;
     } else {
         return 1;
     }
@@ -90,10 +90,6 @@
 
 // Customize the appearance of table view cells.
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (self.tasks == nil) {
-        [self setupFilteredTasks];
-    }
-    
     static NSString* reuseIdentifier = @"TaskDetailsSummary";
     UITableViewCell* cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentifier];
     if (cell == nil) {
@@ -126,7 +122,7 @@
         cell.detailTextLabel.adjustsFontSizeToFitWidth = YES;
         cell.imageView.image = nil;
     } else {
-        if ([self.tasks count] == 0) {
+        if (self.count == 0) {
             cell.accessoryType = UITableViewCellAccessoryNone;
             cell.textLabel.text = @"0 tasks to display";
             cell.textLabel.textColor = [UIColor blackColor];
@@ -134,7 +130,8 @@
             cell.imageView.image = nil;
         } else {
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            Task* task = (Task*) [self.tasks objectAtIndex:indexPath.row];
+            Task* task = [TaskDAO getFilteredTaskFor:indexPath.row parentId:self.parentId parentSystemId:self.parentSystemId forTag:self.tagFilter status:self.statusFilter andStarted:self.startedFilter];
+
             if (task != nil) {
                 // Display the status color.
                 NSDateFormatter *dateComparisonFormatter = [[[NSDateFormatter alloc] init] autorelease];
@@ -178,6 +175,10 @@
                     cell.detailTextLabel.textColor = [UIColor colorWithRed:0.22 green:0.33 blue:0.53 alpha:1.0];
                 }
             } else {
+                cell.accessoryType = UITableViewCellAccessoryNone;
+                cell.textLabel.text = nil;
+                cell.detailTextLabel.text = nil;
+                cell.imageView.image = nil;
                 NSLog(@"%d section: %d row: nil pointer", indexPath.section, indexPath.row);
             }
         }
@@ -187,74 +188,46 @@
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-	Task* task = [self.tasks objectAtIndex:indexPath.row];
+    Task* task = [TaskDAO getFilteredTaskFor:indexPath.row parentId:self.parentId parentSystemId:self.parentSystemId forTag:self.tagFilter status:self.statusFilter andStarted:self.startedFilter];
 	[TaskDAO deleteTask:task.taskId :task.systemId];
-	self.tasks = nil;
+    [TaskDAO renumberTaskPriorities:self.parentId :self.parentSystemId];
 	[tableView reloadData]; 
 }
 
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {
-    
-    if (toIndexPath.row >= 0 && toIndexPath.row < self.tasks.count) {
-        int from = fromIndexPath.row;
-        int to   = toIndexPath.row;
-        if (from == to) {
-            // Moved to same location, return.
-            return;
-        }
+    if (fromIndexPath.row == toIndexPath.row || fromIndexPath.section != 0 || toIndexPath.section != 0) {
+        // Moved to the same location.
+        [tableView reloadData];
+    } else {
+        [TaskDAO renumberTaskPriorities:self.parentId :self.parentSystemId];
+        Task* fromTask = [TaskDAO getFilteredTaskFor:fromIndexPath.row parentId:self.parentId parentSystemId:self.parentSystemId forTag:self.tagFilter status:self.statusFilter andStarted:self.startedFilter];
+        Task* toTask = [TaskDAO getFilteredTaskFor:toIndexPath.row parentId:self.parentId parentSystemId:self.parentSystemId forTag:self.tagFilter status:self.statusFilter andStarted:self.startedFilter];
         
-        // Get indexes from the full list based.
-        NSMutableArray* fullList = nil;
-        if (self.tagFilter == nil && self.statusFilter == 2 && !self.startedFilter) {
-            fullList = [[self.tasks mutableCopy] autorelease];
+        if (fromIndexPath.row < toIndexPath.row) {
+            // Move down the list
+            int newPriority = toTask.priority;
+            [TaskDAO renumberTaskPrioritiesSubset:self.parentId :self.parentSystemId :(fromTask.priority+1) :(toTask.priority) :-1];
+            [TaskDAO updateTaskPriority:fromTask.taskId :fromTask.systemId :newPriority];
         } else {
-            // Get tasks from merged list.
-            Task* fromTask = [self.tasks objectAtIndex:from];
-            Task* toTask = [self.tasks objectAtIndex:to];
-            
-            fullList = [[[TaskDAO getAllChildTasks:self.parentId :self.parentSystemId] mutableCopy] autorelease];
-            for (int i = 0; i < [fullList count]; i++) {                
-                Task* tmpTask = [fullList objectAtIndex:i];
-                if ((tmpTask.taskId == fromTask.taskId) && ([tmpTask.systemId isEqualToString:fromTask.systemId])) {
-                    from = i;
-                } else if ((tmpTask.taskId == toTask.taskId) && ([toTask.systemId isEqualToString:toTask.systemId])) {
-                    to = i;
-                }
-            }
-        }
-        
-        // Use commented out code with full list.
-        Task *task = [fullList objectAtIndex:from];
-        [task retain]; // Getting a bad access error when I insert task if I don't retain here
-        
-        [fullList removeObjectAtIndex:from];
-        [fullList insertObject:task atIndex:to];
-        
-        [task release];
-        
-        for (int i = 0; i < [fullList count]; i++) {
-            task = [fullList objectAtIndex:i];
-            task.priority = i;
-            [TaskDAO updateTaskPriority:task.taskId :task.systemId :i];
+            // Move up the list
+            int newPriority = toTask.priority;
+            [TaskDAO renumberTaskPrioritiesSubset:self.parentId :self.parentSystemId :(toTask.priority) :(fromTask.priority-1) :1];
+            [TaskDAO updateTaskPriority:fromTask.taskId :fromTask.systemId :newPriority];
         }
     }
-    
-    self.tasks = nil;
-    
-	[tableView reloadData];
 }
 
 - (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 0 && self.tasks != nil && self.tasks.count > 0) {
-        return YES;
+    if (indexPath.section == 0) {
+        return self.count > 0;
     }
     return NO;
 }
 
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 0 && self.tasks != nil && self.tasks.count > 0) {
-        return YES;
+    if (indexPath.section == 0) {
+        return self.count > 0;
     }
     return NO;
 }
@@ -276,9 +249,11 @@
 }
 
 - (void)loadTasks {
+    /*
     if (self.tasks == nil) {
         [self setupFilteredTasks];
     }
+     */
 }
 
 @end

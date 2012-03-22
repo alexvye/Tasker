@@ -16,6 +16,8 @@
 @property (nonatomic, strong) NSString* tagFilter;
 @property (nonatomic, assign) int statusFilter;
 @property (nonatomic, assign) BOOL startedFilter;
+@property (nonatomic, assign) int count;
+@property (nonatomic, assign) BOOL filtered;
 
 - (void)loadTasks;
 - (void)loadState;

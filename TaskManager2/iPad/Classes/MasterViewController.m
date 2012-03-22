@@ -12,6 +12,12 @@
 #import "Task.h"
 #import "TaskDAO.h"
 
+@interface MasterViewController () {
+    BOOL first;
+}
+
+@end
+
 @implementation MasterViewController
 @synthesize detailViewController = _detailViewController;
 @synthesize typeSelect = _typeSelect;
@@ -37,6 +43,8 @@
         
         self.title = NSLocalizedString(@"Tasks", @"Tasks");
         self.contentSizeForViewInPopover = CGSizeMake(320.0, 600.0);
+        
+        first = YES;
     }
     return self;
 }
@@ -81,8 +89,17 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self.dataTable reloadData];
-     [self.detailViewController setDetailItem:self.selectedTask]; 
+    
+    if (first) {
+        first = NO;
+    } else {
+        [self.detailViewController setDetailItem:self.selectedTask];
+        [self.taskDataSource loadState];
+        [self.taskDataSource loadTasks];
+        if (self.typeSelect.segmentedControlStyle == 0) {
+            [self.dataTable reloadData];
+        }
+    }
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -175,9 +192,13 @@
 
 #pragma mark - UIPopoverControllerDelegate methods
 - (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController {
+    NSLog(@"TEST");
     self.taskDataSource.tasks = nil;
-    self.tagDataSource.tags = nil;
-    [self.dataTable reloadData];
+    [self.taskDataSource loadState];
+    [self.taskDataSource loadTasks];
+    if (self.typeSelect.segmentedControlStyle == 0) {
+        [self.dataTable reloadData];
+    }    
 }
 
 @end

@@ -109,6 +109,7 @@ static NSString* fileName = nil;
 		maxTaskId = (newMaxTaskId > maxTaskId) ? newMaxTaskId : maxTaskId;
 	}
 	sqlite3_finalize(statement);
+    sqlite3_close(database);
 	
 	return maxTaskId + 1;
 }
@@ -191,6 +192,7 @@ static NSString* fileName = nil;
 		task = [TaskDAO getTaskFromStatement:statement :taskId :systemId];
 	}
 	sqlite3_finalize(statement);
+    sqlite3_close(database);
 	
 	return task;
 }
@@ -200,6 +202,128 @@ static NSString* fileName = nil;
  */
 + (Task*)getChildTask:(int)taskId parentSystemId:(NSString*)systemId andIndex:(int)index {
     return nil;
+}
+
+// Returns a filter task at the passed in index
++ (Task*)getFilteredTaskFor:(int)index parentId:(int)parentId parentSystemId:(NSString*)parentSystemId forTag:(NSString*)tagFilter status:(int)statusFilter andStarted:(BOOL)startedFilter  {
+    int tagId = [TaskDAO getTagId:tagFilter];
+
+    // Open the database.
+    sqlite3* database;
+    if (sqlite3_open([[TaskDAO getDBPath] UTF8String], &database) != SQLITE_OK) {
+        NSAssert1(0, @"Error opening the database: '%s'.", sqlite3_errmsg(database));
+    }
+	
+	// Create the statement.
+	sqlite3_stmt* statement;
+	NSMutableString* sql = [NSMutableString stringWithString:
+                            @"SELECT task.task_id, task.system_id, task.parent_task_id, task.parent_system_id, "
+                            "task.title, task.description, task.start_date, task.end_date, task.priority_id, task.status_id, "
+                            "task.recurrance_type, task.recurrance_value FROM task "];
+    if (tagId != -1) {
+        [sql appendString:@", tag_link "];
+    }
+    [sql appendString:@"WHERE task.parent_task_id = ? " ];
+    if (parentSystemId != nil) {
+        [sql appendString:@"AND task.parent_system_id = ? "];
+    }
+    if (tagId != -1) {
+        [sql appendString:@"AND tag_link.task_id = task.task_id AND tag_link.system_id = task.system_id AND tag_link.tag_id = ? "];
+    }
+    if (statusFilter != 2) {
+        [sql appendString:@"AND task.status_id = ? "];
+    }
+    if (startedFilter) {
+        [sql appendString:@"AND date('now') > task.start_date "];
+    }
+	[sql appendString:@"ORDER BY task.priority_id "];
+	if (sqlite3_prepare_v2(database, [sql UTF8String], -1, &statement, nil) != SQLITE_OK) {
+		NSAssert1(0, @"Error creating database statement: '%s'.", sqlite3_errmsg(database));
+	}
+
+    int idx = 1;
+    sqlite3_bind_int(statement, idx++, parentId);
+    if (parentSystemId != nil) {
+        sqlite3_bind_text(statement, idx++, [parentSystemId UTF8String], -1, SQLITE_TRANSIENT);
+    }
+    if (tagId != -1) {
+        sqlite3_bind_int(statement, idx++, tagId);
+    }
+    if (statusFilter != 2) {
+        sqlite3_bind_int(statement, idx++, statusFilter);
+    }
+    
+    Task* task = nil;
+    for (int i = 0; i < index && sqlite3_step(statement) == SQLITE_ROW; i++) {
+        // No OP iterate through.
+    }
+    if (sqlite3_step(statement) == SQLITE_ROW) {
+        int taskId = sqlite3_column_int(statement, 0);
+        NSString* systemId = [NSString stringWithUTF8String:(char*)sqlite3_column_text(statement, 1)];;
+        task = [TaskDAO getTaskFromStatement:statement :taskId :systemId];
+    }
+    
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+    
+    return task;   
+}
+
++ (int)getFilteredTaskCountForParentId:(int)parentId parentSystemId:(NSString*)parentSystemId forTag:(NSString*)tagFilter status:(int)statusFilter andStarted:(BOOL)startedFilter {
+    int tagId = [TaskDAO getTagId:tagFilter];
+    
+    // Open the database.
+    sqlite3* database;
+    if (sqlite3_open([[TaskDAO getDBPath] UTF8String], &database) != SQLITE_OK) {
+        NSAssert1(0, @"Error opening the database: '%s'.", sqlite3_errmsg(database));
+    }
+	
+	// Create the statement.
+	sqlite3_stmt* statement;
+	NSMutableString* sql = [NSMutableString stringWithString:
+                            @"SELECT count(*) FROM task "];
+    if (tagId != -1) {
+        [sql appendString:@", tag_link "];
+    }
+    [sql appendString:@"WHERE task.parent_task_id = ? " ];
+    if (parentSystemId != nil) {
+        [sql appendString:@"AND task.parent_system_id = ? "];
+    }
+    if (tagId != -1) {
+        [sql appendString:@"AND tag_link.task_id = task.task_id AND tag_link.system_id = task.system_id AND tag_link.tag_id = ? "];
+    }
+    if (statusFilter != 2) {
+        [sql appendString:@"AND task.status_id = ? "];
+    }
+    if (startedFilter) {
+        [sql appendString:@"AND date('now') > task.start_date "];
+    }
+	[sql appendString:@"ORDER BY task.priority_id "];
+	if (sqlite3_prepare_v2(database, [sql UTF8String], -1, &statement, nil) != SQLITE_OK) {
+		NSAssert1(0, @"Error creating database statement: '%s'.", sqlite3_errmsg(database));
+	}
+    
+    int idx = 1;
+    sqlite3_bind_int(statement, idx++, parentId);
+    if (parentSystemId != nil) {
+        sqlite3_bind_text(statement, idx++, [parentSystemId UTF8String], -1, SQLITE_TRANSIENT);
+    }
+    if (tagId != -1) {
+        sqlite3_bind_int(statement, idx++, tagId);
+    }
+    if (statusFilter != 2) {
+        sqlite3_bind_int(statement, idx++, statusFilter);
+    }
+    
+    int count = 0;
+    if (sqlite3_step(statement) == SQLITE_ROW) {
+        count= sqlite3_column_int(statement, 0);
+    }
+    
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+    
+    return count; 
 }
 
 /**
@@ -363,11 +487,127 @@ static NSString* fileName = nil;
  * This method is used to set a new task's priority.
  */
 +(void) updateTaskPriority:(int)taskId :(NSString*)systemId :(int)priority {
+	// Open the database.
+	sqlite3* database;
+	if (sqlite3_open([[TaskDAO getDBPath] UTF8String], &database) != SQLITE_OK) {
+		NSAssert1(0, @"Error opening the database: '%s'.", sqlite3_errmsg(database));
+	}
+
+    sqlite3_stmt* statement;
+    NSString* sql = @"UPDATE task SET priority_id = ? "
+                     "WHERE task_id = ? AND system_id = ?";
+    if (sqlite3_prepare_v2(database, [sql UTF8String], -1, &statement, nil) != SQLITE_OK) {
+        NSAssert1(0, @"Error creating database statement: '%s'.", sqlite3_errmsg(database));
+    }
+    
+    sqlite3_bind_int(statement, 1, priority);
+    sqlite3_bind_int(statement, 2, taskId);
+    sqlite3_bind_text(statement, 3, [systemId UTF8String], -1, SQLITE_TRANSIENT);
+    
+    if (sqlite3_step(statement) != SQLITE_DONE) {
+        NSAssert1(0, @"Error updating the database: '%s'.", sqlite3_errmsg(database));
+    }
+    
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+/*    
 	Task* task = [TaskDAO getTask:taskId :systemId];
 	if (task != nil) {
 		task.priority = priority;
 		[TaskDAO updateTask:task];
 	}
+ */
+}
+
+/**
+ * This method is used to renumber the priorites for a task id and system id.
+ */
++ (void)renumberTaskPriorities:(int)parentTaskId :(NSString*)parentSystemId {
+	// Open the database.
+	sqlite3* database;
+	if (sqlite3_open([[TaskDAO getDBPath] UTF8String], &database) != SQLITE_OK) {
+		NSAssert1(0, @"Error opening the database: '%s'.", sqlite3_errmsg(database));
+	}
+	
+	// Create the statement.
+	sqlite3_stmt* statement;
+	NSMutableString* sql = [NSMutableString stringWithString:@"SELECT task.task_id, task.system_id FROM task "
+                    "WHERE task.parent_task_id = ? "];
+    if (parentSystemId != nil) {
+        [sql appendString:@"AND task.parent_system_id = ? "];
+    }
+    [sql appendString:@"ORDER BY task.priority_id;"];
+
+	if (sqlite3_prepare_v2(database, [sql UTF8String], -1, &statement, nil) != SQLITE_OK) {
+		NSAssert1(0, @"Error creating database statement: '%s'.", sqlite3_errmsg(database));
+	}
+
+    sqlite3_bind_int(statement, 1, parentTaskId);
+    if (parentSystemId != nil) {
+        sqlite3_bind_text(statement, 2, [parentSystemId UTF8String], -1, SQLITE_TRANSIENT);
+    }
+    
+    NSString* sql2 = @"UPDATE task SET priority_id = ? "
+                     "WHERE task_id = ? AND system_id = ?";
+    for (int i = 1; (sqlite3_step(statement) == SQLITE_ROW); i++) {
+        int taskId = sqlite3_column_int(statement, 0);
+        NSString* systemId = [NSString stringWithUTF8String:(char*)sqlite3_column_text(statement,1)];
+
+        sqlite3_stmt* statement2;
+        if (sqlite3_prepare_v2(database, [sql2 UTF8String], -1, &statement2, nil) != SQLITE_OK) {
+            NSAssert1(0, @"Error creating database statement: '%s'.", sqlite3_errmsg(database));
+        }
+  
+        sqlite3_bind_int(statement2, 1, i);
+        sqlite3_bind_int(statement2, 2, taskId);
+        sqlite3_bind_text(statement2, 3, [systemId UTF8String], -1, SQLITE_TRANSIENT);
+        
+        if (sqlite3_step(statement2) != SQLITE_DONE) {
+            NSAssert1(0, @"Error updating the database: '%s'.", sqlite3_errmsg(database));
+        }
+       
+        sqlite3_finalize(statement2);        
+    }
+    
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+}
+
+/**
+ * This method is used to renumber the priorities of a subset of tasks.
+ */
++ (void)renumberTaskPrioritiesSubset:(int)parentTaskId :(NSString *)parentSystemId :(int)fromPriority :(int)toPriority :(int)add {
+	// Open the database.
+	sqlite3* database;
+	if (sqlite3_open([[TaskDAO getDBPath] UTF8String], &database) != SQLITE_OK) {
+		NSAssert1(0, @"Error opening the database: '%s'.", sqlite3_errmsg(database));
+	}
+	
+	// Create the statement.
+	sqlite3_stmt* statement;
+    NSMutableString* sql = [NSMutableString stringWithString:
+        @"UPDATE task SET priority_id = priority_id + ?  WHERE parent_task_id = ? " ];
+    if (parentSystemId) {
+        [sql appendString:@"AND parent_system_id = ? "];
+    }
+    [sql appendString:@"AND priority_id >= ? AND priority_id <= ?;"];
+    
+	if (sqlite3_prepare_v2(database, [sql UTF8String], -1, &statement, nil) != SQLITE_OK) {
+		NSAssert1(0, @"Error creating database statement: '%s'.", sqlite3_errmsg(database));
+	}
+    
+    int i = 1;
+    sqlite3_bind_int(statement, i++, add);
+    sqlite3_bind_int(statement, i++, parentTaskId);
+    sqlite3_bind_text(statement, i++, [parentSystemId UTF8String], -1, SQLITE_TRANSIENT);
+
+    if (sqlite3_step(statement) != SQLITE_DONE) {
+        NSAssert1(0, @"Error updating the database: '%s'.", sqlite3_errmsg(database));
+    }
+    
+    sqlite3_finalize(statement);
+    sqlite3_close(database);
+    
 }
 
 /**
@@ -442,6 +682,7 @@ static NSString* fileName = nil;
 		date = [TaskDAO getDateFromString:[NSString stringWithUTF8String:(char*)sqlite3_column_text(statement, 0)]];
 	}
 	sqlite3_finalize(statement);
+    sqlite3_close(database);
 	
 	return date;
 }
@@ -508,6 +749,7 @@ static NSString* fileName = nil;
 		[tasks addObject:task];
 	}
 	sqlite3_finalize(statement);
+    sqlite3_close(database);
 	
 	return tasks;
 }
@@ -543,6 +785,7 @@ static NSString* fileName = nil;
 		[tags addObject:tag];
 	}
 	sqlite3_finalize(statement);
+    sqlite3_close(database);
 	
 	return tags;
 }
@@ -682,6 +925,7 @@ static NSString* fileName = nil;
 		[tags addObject:tag];
 	}
 	sqlite3_finalize(statement);
+    sqlite3_close(database);
 	
 	return tags;
 }
@@ -831,6 +1075,38 @@ static NSString* fileName = nil;
 		sqlite3_close(database);
 	}
 	return response;
+}
+
+/**
+ * This methods returns the tag id.
+ */
++(int) getTagId:(NSString*)tag {
+    int response = -1;
+    if (tag != nil) {
+		// Open the database.
+		sqlite3* database;
+		if (sqlite3_open([[TaskDAO getDBPath] UTF8String], &database) != SQLITE_OK) {
+			NSAssert1(0, @"Error opening the database: '%s'.", sqlite3_errmsg(database));
+		}
+		
+		// Create the statement.
+		sqlite3_stmt* statement;
+		NSString* sql = @"SELECT tag_id FROM tag WHERE UPPER(tag_desc) = ?";
+		if (sqlite3_prepare_v2(database, [sql UTF8String], -1, &statement, nil) != SQLITE_OK) {
+			NSAssert1(0, @"Error creating database statement: '%s'.", sqlite3_errmsg(database));
+		}
+		
+		// Find out if the tag exists
+		sqlite3_bind_text(statement, 1, [[tag uppercaseString] UTF8String], -1, SQLITE_TRANSIENT);
+		if (sqlite3_step(statement) == SQLITE_ROW) {
+            response = sqlite3_column_int(statement, 0);
+		}
+		sqlite3_finalize(statement);
+		
+		// Close the database.
+		sqlite3_close(database);
+    }
+    return response;
 }
 
 @end

@@ -11,6 +11,7 @@
 #import "FilterTasksViewController.h"
 #import "TaskDetailViewController.h"
 #import "Task.h"
+#import "TaskDAO.h"
 
 @implementation TaskTableViewController
 @synthesize dataTable;
@@ -113,7 +114,7 @@
 
 #pragma mark - UITableViewDelegate methods
 - (NSIndexPath *)tableView:(UITableView *)tv willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 0 && [self.dataSource.tasks count] > 0) {
+    if (indexPath.section == 0 && self.dataSource.count > 0) {
         return indexPath;
     } else if (indexPath.section == 1 && indexPath.row == 0) {
         return indexPath;
@@ -123,14 +124,12 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 0 && self.dataSource.tasks.count > indexPath.row) {
+    if (indexPath.section == 0 && indexPath.row < self.dataSource.count) {
         TaskDetailViewController *taskDetailView = [[[TaskDetailViewController alloc] 
                                                     initWithNibName:@"TaskDetailViewController" bundle:nil] autorelease];
-
-        Task* task = (Task*) [self.dataSource.tasks objectAtIndex:[indexPath row]];
+        Task* task = [TaskDAO getFilteredTaskFor:indexPath.row parentId:self.dataSource.parentId parentSystemId:self.dataSource.parentSystemId forTag:self.dataSource.tagFilter status:self.dataSource.statusFilter andStarted:self.dataSource.startedFilter];
         taskDetailView.dataSource.task = task;
         
-        self.dataSource.tasks = nil;
         [self.navigationController pushViewController:taskDetailView animated:YES];
     } else if (indexPath.section == 1 && indexPath.row == 0) {
         [self addStatusFilter:self.filterTableButton];
