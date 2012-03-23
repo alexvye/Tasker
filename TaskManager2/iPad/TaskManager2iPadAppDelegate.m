@@ -11,6 +11,7 @@
 #import "DetailViewController.h"
 #import "DataManager.h"
 
+
 @implementation TaskManager2iPadAppDelegate
 
 @synthesize window = _window;
@@ -25,6 +26,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+	[DataManager loadData];
 //    self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
     // Override point for customization after application launch.
     

@@ -129,9 +129,10 @@
     if (self.addPopover != nil && [self.addPopover isPopoverVisible]) {
         [self.addPopover dismissPopoverAnimated:YES];
     } else {
+        TaskAddViewController* taskAddView = nil;
         UIViewController* uvc;
         if (self.typeSelect.selectedSegmentIndex == 0) {
-            TaskAddViewController* taskAddView = [[[TaskAddViewController alloc] initWithNibName:@"TaskAddViewController" bundle:nil] autorelease];
+            taskAddView = [[[TaskAddViewController alloc] initWithNibName:@"TaskAddViewController" bundle:nil] autorelease];
             taskAddView.newTask = YES;
             taskAddView.parentId = self.taskDataSource.parentId;
             taskAddView.parentSystemId = self.taskDataSource.parentSystemId;
@@ -146,16 +147,16 @@
         }
       
         self.addPopover = [[[UIPopoverController alloc] initWithContentViewController:uvc] autorelease];
+        if (taskAddView != nil) {
+            taskAddView.popover = self.addPopover;
+        }
         self.addPopover.popoverContentSize = uvc.view.frame.size;
         self.addPopover.delegate = self;
         [self.addPopover presentPopoverFromBarButtonItem:sender 
                                    permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
         
         
-    }
-
-    
-    
+    }    
 }
 
 - (IBAction)typeChange:(id)sender {

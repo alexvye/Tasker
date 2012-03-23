@@ -18,6 +18,7 @@
     NSDate* alarmDate;
 }
 
+@property(nonatomic, strong) UIPopoverController* popover;
 @property(nonatomic, retain) IBOutlet UITableView* dataTable;
 @property(assign) BOOL newTask;
 @property(nonatomic, copy) Task* task;

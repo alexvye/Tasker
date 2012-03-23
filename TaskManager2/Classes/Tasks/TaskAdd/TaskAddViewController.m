@@ -13,6 +13,7 @@
 #import "ModifyTitleViewController.h"
 #import "ModifyRecurranceViewController.h"
 #import "ModifyTasksTagsViewController.h"
+#import "MasterViewController.h"
 #import "TitleDescriptionCell.h"
 #import "StartEndDateCell.h"
 #import "DataManager.h"
@@ -27,6 +28,7 @@
 @end
 
 @implementation TaskAddViewController
+@synthesize popover = _popover;
 @synthesize dataTable;
 @synthesize newTask;
 @synthesize task;
@@ -44,6 +46,7 @@
 }
 
 - (void)dealloc {
+    [_popover release];
 	[dataTable release];
 	[task release];
     [parentSystemId release];
@@ -87,7 +90,11 @@
 }
 
 - (IBAction)cancelPressed:(id)sender {
-	[self dismissModalViewControllerAnimated:YES];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        [self.popover dismissPopoverAnimated:YES];
+    } else {
+        [self dismissModalViewControllerAnimated:YES];
+    }
 }
 
 - (IBAction)donePressed:(id)sender {
@@ -123,7 +130,13 @@
         }
         [CommonUI renewAllTimers];
         
-		[self dismissModalViewControllerAnimated:YES];
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+            MasterViewController* mvc = (MasterViewController*)self.popover.delegate;
+            [mvc.dataTable reloadData];
+            [self.popover dismissPopoverAnimated:YES];
+        } else {
+            [self dismissModalViewControllerAnimated:YES];
+        }
 	}
 }
 
