@@ -599,7 +599,11 @@ static NSString* fileName = nil;
     int i = 1;
     sqlite3_bind_int(statement, i++, add);
     sqlite3_bind_int(statement, i++, parentTaskId);
-    sqlite3_bind_text(statement, i++, [parentSystemId UTF8String], -1, SQLITE_TRANSIENT);
+    if (parentSystemId) {
+        sqlite3_bind_text(statement, i++, [parentSystemId UTF8String], -1, SQLITE_TRANSIENT);
+    }
+    sqlite3_bind_int(statement, i++, fromPriority);
+    sqlite3_bind_int(statement, i++, toPriority);
 
     if (sqlite3_step(statement) != SQLITE_DONE) {
         NSAssert1(0, @"Error updating the database: '%s'.", sqlite3_errmsg(database));

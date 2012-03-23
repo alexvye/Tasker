@@ -15,6 +15,7 @@
 	BOOL newTagFlag;
 }
 
+@property(nonatomic, strong) UIPopoverController* popover;
 @property(nonatomic, retain) IBOutlet UITableView* dataTable;
 @property(nonatomic, retain) NSString* prevTag;
 @property(assign) BOOL newTagFlag;

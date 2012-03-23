@@ -130,6 +130,7 @@
         [self.addPopover dismissPopoverAnimated:YES];
     } else {
         TaskAddViewController* taskAddView = nil;
+        TagsAddViewController* tagAddView = nil;
         UIViewController* uvc;
         if (self.typeSelect.selectedSegmentIndex == 0) {
             taskAddView = [[[TaskAddViewController alloc] initWithNibName:@"TaskAddViewController" bundle:nil] autorelease];
@@ -140,15 +141,22 @@
             UINavigationController* navBar = [[UINavigationController alloc] initWithRootViewController:taskAddView];
             navBar.view.frame = taskAddView.view.frame;
             navBar.navigationBar.hidden = TRUE;
-            
             uvc = navBar;
         } else {
-            uvc = [[[TagsAddViewController alloc] initWithNibName:@"TagsAddViewController" bundle:nil] autorelease];
+            tagAddView = [[[TagsAddViewController alloc] initWithNibName:@"TagsAddViewController" bundle:nil] autorelease];
+            
+            UINavigationController* navBar = [[UINavigationController alloc] initWithRootViewController:tagAddView];
+            navBar.view.frame = tagAddView.view.frame;
+            navBar.navigationBar.hidden = TRUE;
+            uvc = navBar;
         }
       
         self.addPopover = [[[UIPopoverController alloc] initWithContentViewController:uvc] autorelease];
         if (taskAddView != nil) {
             taskAddView.popover = self.addPopover;
+        }
+        if (tagAddView != nil) {
+            tagAddView.popover = self.addPopover;
         }
         self.addPopover.popoverContentSize = uvc.view.frame.size;
         self.addPopover.delegate = self;
@@ -240,6 +248,21 @@
             [tableView deselectRowAtIndexPath:indexPath animated:NO];
             [self changeFilter:self.filterButton];
         }
+    } else {
+        TagsAddViewController* tagAddView = [[[TagsAddViewController alloc] initWithNibName:@"TagsAddViewController" bundle:nil] autorelease];
+        tagAddView.prevTag = [self.tagDataSource.tags objectAtIndex:indexPath.row];
+		tagAddView.newTagFlag = NO;
+        
+        UINavigationController* navBar = [[UINavigationController alloc] initWithRootViewController:tagAddView];
+        navBar.view.frame = tagAddView.view.frame;
+        navBar.navigationBar.hidden = TRUE;
+    
+        self.addPopover = [[[UIPopoverController alloc] initWithContentViewController:navBar] autorelease];
+        tagAddView.popover = self.addPopover;
+        self.addPopover.popoverContentSize = navBar.view.frame.size;
+        self.addPopover.delegate = self;
+        [self.addPopover presentPopoverFromBarButtonItem:self.navigationItem.rightBarButtonItem
+                                permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
     }
 }
 

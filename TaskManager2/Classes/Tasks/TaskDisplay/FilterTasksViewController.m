@@ -7,6 +7,7 @@
 //
 
 #import "FilterTasksViewController.h"
+#import "MasterViewController.h"
 #import "TaskDAO.h"
 #import "CommonUI.h"
 #import <objc/runtime.h>
@@ -61,6 +62,9 @@
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) {
         [self dismissModalViewControllerAnimated:YES];
     }  else {
+        MasterViewController* mvc = (MasterViewController*)self.popover.delegate;
+        [mvc.taskDataSource loadState];
+        [mvc.dataTable reloadData];
         [self.popover dismissPopoverAnimated:YES];
     }
 }

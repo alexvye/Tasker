@@ -8,10 +8,12 @@
 
 #import "TagsAddViewController.h"
 #import "EnterDataCellView.h"
+#import "MasterViewController.h"
 #import "CommonUI.h"
 #import "TaskDAO.h"
 
 @implementation TagsAddViewController
+@synthesize popover = _popover;
 @synthesize dataTable;
 @synthesize newTagFlag;
 @synthesize prevTag;
@@ -42,13 +44,18 @@
 }
 */
 - (void)dealloc {
+    [_popover release];
 	[dataTable release];
 	[prevTag release];
     [super dealloc];
 }
 
 - (IBAction)cancelPressed:(UIButton*)aButton {
-	[self dismissModalViewControllerAnimated:YES];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        [self.popover dismissPopoverAnimated:YES];
+    } else {
+        [self dismissModalViewControllerAnimated:YES];
+    }
 }
 
 - (IBAction)donePressed:(UIButton*)aButton {
@@ -78,11 +85,27 @@
 			[alert release];
 		} else {
 			[TaskDAO addTag:newTag];
-			[self dismissModalViewControllerAnimated:YES];
+            
+            if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+                MasterViewController* mvc = (MasterViewController*)self.popover.delegate;
+                mvc.tagDataSource.tags = nil;
+                [mvc.dataTable reloadData];
+                [self.popover dismissPopoverAnimated:YES];
+            } else {
+                [self dismissModalViewControllerAnimated:YES];
+            }
 		}
 	} else {
 		[TaskDAO updateTag:newTag :self.prevTag];
-		[self dismissModalViewControllerAnimated:YES];
+        
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+            MasterViewController* mvc = (MasterViewController*)self.popover.delegate;
+            mvc.tagDataSource.tags = nil;
+            [mvc.dataTable reloadData];
+            [self.popover dismissPopoverAnimated:YES];
+        } else {
+            [self dismissModalViewControllerAnimated:YES];
+        }
 	}
 }	
 
