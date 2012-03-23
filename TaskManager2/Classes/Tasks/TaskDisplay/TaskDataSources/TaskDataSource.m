@@ -9,10 +9,6 @@
 #import "Task.h"
 #import "TaskDAO.h"
 
-@interface TaskDataSource ()
-- (void)setupFilteredTasks;
-@end
-
 @implementation TaskDataSource
 @synthesize parentId = _parentId;
 @synthesize parentSystemId = _parentSystemId;
@@ -26,36 +22,6 @@
     [_parentSystemId release];
     [_tagFilter release];
     [super dealloc];
-}
-
-#pragma mark - Private methods
-- (void)setupFilteredTasks {
-/*
-    // Get all tasks for the status filter.
-    NSArray* tmpTasks;
-    if (self.statusFilter == TASK_STATUS_ALL) {
-        tmpTasks = [TaskDAO getAllChildTasks:self.parentId :self.parentSystemId];
-    } else {
-        tmpTasks = [TaskDAO getAllChildTasks:self.parentId :self.parentSystemId :self.statusFilter];
-    }
-    
-    if (self.tagFilter == nil && !self.startedFilter) {
-        // If not tag filter or started filter.
-        self.tasks = tmpTasks;
-    } else {
-        // Iterate tasks and filter using tag and started filters.
-        NSMutableArray* postFilteredTasks = [[[NSMutableArray alloc] init] autorelease];
-        for (Task *task in tmpTasks) {
-            NSTimeInterval timeSinceStart = [task.startDate timeIntervalSinceNow];
-            if (!self.startedFilter || timeSinceStart <= 0) {
-                if (self.tagFilter == nil || [task.tags containsObject:self.tagFilter]) {
-                    [postFilteredTasks addObject:task];
-                }
-            }            
-        }
-        self.tasks = postFilteredTasks;
-    }
-*/    
 }
 
 #pragma mark - UITableViewDataSource methods

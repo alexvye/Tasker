@@ -22,7 +22,11 @@
 @synthesize detailViewController = _detailViewController;
 @synthesize typeSelect = _typeSelect;
 @synthesize dataTable = _dataTable;
+@synthesize toolbar = _toolbar;
 @synthesize filterButton = _filterButton;
+@synthesize editButton = _editButton;
+@synthesize doneButton = _doneButton;
+@synthesize flexible = _flexible;
 @synthesize taskDataSource = _taskDataSource;
 @synthesize tagDataSource = _tagDataSource;
 @synthesize filterPopover = _filterPopover;
@@ -34,6 +38,11 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
+        self.filterButton = [[[UIBarButtonItem alloc] initWithTitle:@"Filter" style:UIBarButtonItemStyleBordered target:self action:@selector(changeFilter:)] autorelease];
+        self.editButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(editTable:)] autorelease];
+        self.doneButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(editTableDone:)] autorelease];
+        self.flexible = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil] autorelease];
+
         self.taskDataSource = [[[TaskDataSource alloc] init] autorelease];
         self.taskDataSource.parentId = NO_PARENT;
 		self.taskDataSource.parentSystemId = nil;        
@@ -54,7 +63,11 @@
     [_detailViewController release];
     [_typeSelect release];
     [_dataTable release];
+    [_toolbar release];
     [_filterButton release];
+    [_editButton release];
+    [_doneButton release];
+    [_flexible release];
     [_taskDataSource release];
     [_tagDataSource release];
     [_filterPopover release];
@@ -81,6 +94,8 @@
     [self.taskDataSource loadState];
 
 //    self.navigationItem.leftBarButtonItem = self.editButtonItem;
+    NSArray* items = [[[NSArray alloc] initWithObjects:self.filterButton, self.flexible, self.editButton, nil] autorelease];
+    [self.toolbar setItems:items];
 
     UIBarButtonItem *addButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)] autorelease];
     self.navigationItem.rightBarButtonItem = addButton;
@@ -151,6 +166,18 @@
     }
 }
 
+- (IBAction)editTable:(id)sender {
+    [[self dataTable] setEditing:YES animated:YES];
+    NSArray* items = [[[NSArray alloc] initWithObjects:self.filterButton, self.flexible, self.doneButton, nil] autorelease];
+    [self.toolbar setItems:items];
+}
+
+- (IBAction)editTableDone:(id)sender {
+    [[self dataTable] setEditing:NO animated:YES];
+    NSArray* items = [[[NSArray alloc] initWithObjects:self.filterButton, self.flexible, self.editButton, nil] autorelease];
+    [self.toolbar setItems:items];
+}
+
 #pragma mark - UITableViewDelegate methods
 
 - (NSIndexPath *)tableView:(UITableView *)tv willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -174,6 +201,7 @@
             [self.detailViewController setDetailItem:task]; 
             
             MasterViewController* mvc = [[[MasterViewController alloc] initWithNibName:@"MasterViewController" bundle:nil] autorelease];
+            mvc.detailViewController = self.detailViewController;
             mvc.taskDataSource.parentId = task.taskId;
             mvc.taskDataSource.parentSystemId = task.systemId;
             mvc.selectedTask = task;

@@ -297,18 +297,24 @@
         if (cell == nil) {
             cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:SectionsTableIdentifier] autorelease];
             cell.textLabel.text = @"Task Completed";
-            
-            CGRect frame = CGRectMake(0.0, 0.0, 94.0, 27.0);
-            UISwitch* switchCtl = [[[UISwitch alloc] initWithFrame:frame] autorelease];
-            [switchCtl addTarget:self action:@selector(taskCompleted:) forControlEvents:UIControlEventValueChanged];
-            
-            // in case the parent view draws with a custom color or gradient, use a transparent color
-            switchCtl.backgroundColor = [UIColor clearColor];
-            switchCtl.accessibilityLabel = NSLocalizedString(@"StandardSwitch", @"");
-            switchCtl.tag = 1;
-            switchCtl.on = self.task.status;
-            cell.accessoryView = switchCtl;
         }
+            
+        CGRect frame = CGRectMake(0.0, 0.0, 94.0, 27.0);
+        UISwitch* switchCtl = [[[UISwitch alloc] initWithFrame:frame] autorelease];
+        [switchCtl addTarget:self action:@selector(taskCompleted:) forControlEvents:UIControlEventValueChanged];
+            
+        // in case the parent view draws with a custom color or gradient, use a transparent color
+        switchCtl.backgroundColor = [UIColor clearColor];
+        switchCtl.accessibilityLabel = NSLocalizedString(@"StandardSwitch", @"");
+        switchCtl.tag = 1;
+        if (self.task) {
+            switchCtl.on = self.task.status;
+            switchCtl.userInteractionEnabled = YES;
+        } else {
+            switchCtl.on = NO;
+            switchCtl.userInteractionEnabled = NO;
+        }
+        cell.accessoryView = switchCtl;
     } else {
         static NSString* reuseIdentifier = @"TaskDetailsChildTaskCell";
         cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentifier];
