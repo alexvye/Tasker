@@ -47,7 +47,7 @@
     
     // Create the edit button.
     self.editTableButton = [[[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleBordered target:self action:@selector(editButtonPressed:)] autorelease];
-    self.saveTableButton = [[[UIBarButtonItem alloc] initWithTitle:@"Save" style:UIBarButtonItemStyleDone target:self action:@selector(saveButtonPressed:)] autorelease];
+    self.saveTableButton = [[[UIBarButtonItem alloc] initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(saveButtonPressed:)] autorelease];
     self.navigationItem.leftBarButtonItem = self.editTableButton;        
 }
 

@@ -55,7 +55,7 @@
     // Display the the button bar.
 	UIBarButtonItem *plusButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(addTask:)] autorelease];
     self.editTableButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(editButtonPressed:)] autorelease];
-    self.saveTableButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(saveButtonPressed:)] autorelease];
+    self.saveTableButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(saveButtonPressed:)] autorelease];
 	self.navigationItem.rightBarButtonItem = plusButton;
     self.navigationItem.title = @"Tasks";
 
