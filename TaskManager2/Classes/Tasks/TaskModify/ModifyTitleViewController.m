@@ -48,12 +48,22 @@
     [super dealloc];
 }
 
-- (IBAction)cancelPressed:(id)sender {
-	[self dismissModalViewControllerAnimated:YES];
+- (IBAction)cancelPressed:(id)sender {    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        [self.navigationController popViewControllerAnimated:YES];
+    } else {
+        [self dismissModalViewControllerAnimated:YES];
+    }
 }
 
 - (IBAction)donePressed:(id)sender {
-	UIViewController* vc = [self parentViewController];
+    UIViewController* vc;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        vc = [self.navigationController.viewControllers objectAtIndex:(self.navigationController.viewControllers.count-2)];
+    } else{
+        vc = [self parentViewController];
+    }
+    
     if (vc == nil) {
         vc = self.presentingViewController;
     }
@@ -81,7 +91,11 @@
         }
     }
 
-	[self dismissModalViewControllerAnimated:YES];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        [self.navigationController popViewControllerAnimated:YES];
+    } else {
+        [self dismissModalViewControllerAnimated:YES];
+    }
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView*)tableView {

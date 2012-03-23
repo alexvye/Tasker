@@ -26,6 +26,7 @@
 @property (strong, nonatomic) TaskDataSource* taskDataSource;
 @property (strong, nonatomic) TagsDataSource* tagDataSource;
 @property (nonatomic, strong) UIPopoverController* filterPopover;
+@property (nonatomic, strong) UIPopoverController* addPopover;
 @property (nonatomic, strong) Task* selectedTask;
 
 - (IBAction)insertNewObject:(id)sender;

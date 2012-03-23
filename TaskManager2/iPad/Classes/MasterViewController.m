@@ -9,6 +9,8 @@
 #import "MasterViewController.h"
 #import "DetailViewController.h"
 #import "FilterTasksViewController.h"
+#import "TaskAddViewController.h"
+#import "TagsAddViewController.h"
 #import "Task.h"
 #import "TaskDAO.h"
 
@@ -30,6 +32,7 @@
 @synthesize taskDataSource = _taskDataSource;
 @synthesize tagDataSource = _tagDataSource;
 @synthesize filterPopover = _filterPopover;
+@synthesize addPopover = _addPopover;
 @synthesize selectedTask = _selectedTask;
 
 
@@ -123,11 +126,36 @@
 
 #pragma mark - UI event methods
 - (IBAction)insertNewObject:(id)sender {
-    if (self.typeSelect.selectedSegmentIndex == 0) {
-        NSLog(@"TASK ADD");
+    if (self.addPopover != nil && [self.addPopover isPopoverVisible]) {
+        [self.addPopover dismissPopoverAnimated:YES];
     } else {
-        NSLog(@"TAG ADD");
+        UIViewController* uvc;
+        if (self.typeSelect.selectedSegmentIndex == 0) {
+            TaskAddViewController* taskAddView = [[[TaskAddViewController alloc] initWithNibName:@"TaskAddViewController" bundle:nil] autorelease];
+            taskAddView.newTask = YES;
+            taskAddView.parentId = self.taskDataSource.parentId;
+            taskAddView.parentSystemId = self.taskDataSource.parentSystemId;
+ 
+            UINavigationController* navBar = [[UINavigationController alloc] initWithRootViewController:taskAddView];
+            navBar.view.frame = taskAddView.view.frame;
+            navBar.navigationBar.hidden = TRUE;
+            
+            uvc = navBar;
+        } else {
+            uvc = [[[TagsAddViewController alloc] initWithNibName:@"TagsAddViewController" bundle:nil] autorelease];
+        }
+      
+        self.addPopover = [[[UIPopoverController alloc] initWithContentViewController:uvc] autorelease];
+        self.addPopover.popoverContentSize = uvc.view.frame.size;
+        self.addPopover.delegate = self;
+        [self.addPopover presentPopoverFromBarButtonItem:sender 
+                                   permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+        
+        
     }
+
+    
+    
 }
 
 - (IBAction)typeChange:(id)sender {

@@ -143,8 +143,11 @@
 												   bundle:nil 
 												   title:task.title 
 												   description:task.description] autorelease];
-
-	[self presentModalViewController:modifyTitleView animated:YES];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        [self.navigationController pushViewController:modifyTitleView animated:YES];
+    } else {
+        [self presentModalViewController:modifyTitleView animated:YES];
+    }
 }
 
 - (void)updateDate {
@@ -154,7 +157,11 @@
 
 	modifyDatesView.startDate = task.startDate;
 	modifyDatesView.endDate = task.endDate;
-	[self presentModalViewController:modifyDatesView animated:YES];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        [self.navigationController pushViewController:modifyDatesView animated:YES];
+    } else {
+        [self presentModalViewController:modifyDatesView animated:YES];
+    }
 }
 
 - (void)updateAlarm {
@@ -162,8 +169,11 @@
                                                    initWithNibName:@"ModifyAlarmViewController" 
 												   bundle:nil] autorelease];
     modifyAlarmView.alarmDate = self.alarmDate;
-	[self presentModalViewController:modifyAlarmView animated:YES];
-
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        [self.navigationController pushViewController:modifyAlarmView animated:YES];
+    } else {
+        [self presentModalViewController:modifyAlarmView animated:YES];
+    }
 }
 
 - (void)updateRepeat {
@@ -173,7 +183,11 @@
     
 	modifyRepeatView.repeatType = task.recurranceType;
 	modifyRepeatView.repeatValue = task.recurranceValue;
-	[self presentModalViewController:modifyRepeatView animated:YES];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        [self.navigationController pushViewController:modifyRepeatView animated:YES];
+    } else {
+        [self presentModalViewController:modifyRepeatView animated:YES];
+    }
 }
 
 - (void)updateTags {
@@ -182,7 +196,11 @@
 														 bundle:nil] autorelease];
     
 	modifyTagsView.tasksTags = task.tags;
-	[self presentModalViewController:modifyTagsView animated:YES];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        [self.navigationController pushViewController:modifyTagsView animated:YES];
+    } else {
+        [self presentModalViewController:modifyTagsView animated:YES];
+    }
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView*)tableView {
