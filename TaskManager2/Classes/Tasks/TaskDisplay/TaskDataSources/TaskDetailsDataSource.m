@@ -143,7 +143,6 @@
 - (UILabel*)getUILabel:(NSString*)text frame:(CGRect)frame andFont:(UIFont*)font {
     UILabel* label = [[[UILabel alloc] initWithFrame:frame] autorelease];
     
-    label.autoresizingMask =  (UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin);
     label.font = font;
     label.text = text;
     label.backgroundColor = [UIColor clearColor];
@@ -154,7 +153,12 @@
 }
 
 - (NSArray*)getDetailLabels {
-	CGRect frame = CGRectMake(20.0f, 10.0f, 280.0f, 20.0f);
+	CGRect frame;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        frame = CGRectMake(60.0f, 10.0f, self.dataTable.frame.size.width - 120.0f, 20.0f);
+    } else {
+        frame = CGRectMake(20.0f, 10.0f, self.dataTable.frame.size.width - 40.0f, 20.0f);
+    }
     NSMutableArray* labels = [[[NSMutableArray alloc] init] autorelease];
     if (self.task == nil) {
         return labels;
