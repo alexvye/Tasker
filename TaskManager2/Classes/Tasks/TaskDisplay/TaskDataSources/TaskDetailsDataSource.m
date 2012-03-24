@@ -157,7 +157,7 @@
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
         frame = CGRectMake(60.0f, 10.0f, self.dataTable.frame.size.width - 120.0f, 20.0f);
     } else {
-        frame = CGRectMake(20.0f, 10.0f, self.dataTable.frame.size.width - 40.0f, 20.0f);
+        frame = CGRectMake(20.0f, 10.0f, 280.0f, 20.0f);
     }
     NSMutableArray* labels = [[[NSMutableArray alloc] init] autorelease];
     if (self.task == nil) {
@@ -231,7 +231,12 @@
         [repeatString appendFormat:@"Repeats every %d month(s)", self.task.recurranceValue];
     }
     
-    CGRect frame = CGRectMake(20, 10, 280, 20);
+	CGRect frame;
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        frame = CGRectMake(60.0f, 10.0f, self.dataTable.frame.size.width - 120.0f, 20.0f);
+    } else {
+        frame = CGRectMake(20.0f, 10.0f, 280.0f, 20.0f);
+    }
     UILabel* rptLabel = [self getUILabel:repeatString frame:frame andFont:[UIFont systemFontOfSize:12]];
     rptLabel.textColor = [UIColor colorWithRed:0.22 green:0.33 blue:0.53 alpha:1.0];
 
