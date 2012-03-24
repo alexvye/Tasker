@@ -7,6 +7,7 @@
 //
 
 #import "DetailViewController.h"
+#import "TaskAddViewController.h"
 #import "CommonUI.h"
 
 @interface DetailViewController ()
@@ -15,7 +16,7 @@
 @end
 
 @implementation DetailViewController
-
+@synthesize editPopover = _editPopover;
 @synthesize detailItem = _detailItem;
 @synthesize dataSource = _dataSource;
 @synthesize dataTable = _dataTable;
@@ -23,6 +24,7 @@
 
 - (void)dealloc
 {
+    [_editPopover release];
     [_detailItem release];
     [_dataSource release];
     [_dataTable release];
@@ -74,6 +76,9 @@
     self.dataTable.dataSource = self.dataSource;
 	// Do any additional setup after loading the view, typically from a nib.
     [self configureView];
+
+    UIBarButtonItem* editButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemEdit target:self action:@selector(editTask:)] autorelease];
+    self.navigationItem.rightBarButtonItem = editButton;
 }
 
 - (void)viewDidUnload
@@ -117,6 +122,30 @@
         self.dataSource = [[[TaskDetailsDataSource alloc] init] autorelease];
     }
     return self;
+}
+
+- (IBAction)editTask:(id)sender {
+    if (self.detailItem) {
+        Task* task = (Task*)self.detailItem;
+        TaskAddViewController* taskAddView = nil;
+
+        taskAddView = [[[TaskAddViewController alloc] initWithNibName:@"TaskAddViewController" bundle:nil] autorelease];
+        taskAddView.newTask = NO;
+        taskAddView.task = task;
+        taskAddView.parentId = task.parentId;
+        taskAddView.parentSystemId = task.parentSystemId;
+            
+        UINavigationController* navBar = [[UINavigationController alloc] initWithRootViewController:taskAddView];
+        navBar.view.frame = taskAddView.view.frame;
+        navBar.navigationBar.hidden = TRUE;
+        
+        self.editPopover = [[[UIPopoverController alloc] initWithContentViewController:navBar] autorelease];
+        taskAddView.popover = self.editPopover;
+        self.editPopover.popoverContentSize = navBar.view.frame.size;
+        self.editPopover.delegate = self;
+        [self.editPopover presentPopoverFromBarButtonItem:sender 
+                                permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    }
 }
 							
 #pragma mark - Split view

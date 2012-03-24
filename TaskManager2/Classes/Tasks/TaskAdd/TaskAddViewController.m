@@ -14,6 +14,7 @@
 #import "ModifyRecurranceViewController.h"
 #import "ModifyTasksTagsViewController.h"
 #import "MasterViewController.h"
+#import "DetailViewController.h"
 #import "TitleDescriptionCell.h"
 #import "StartEndDateCell.h"
 #import "DataManager.h"
@@ -131,8 +132,14 @@
         [CommonUI renewAllTimers];
         
         if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-            MasterViewController* mvc = (MasterViewController*)self.popover.delegate;
-            [mvc.dataTable reloadData];
+            if (self.newTask) {
+                MasterViewController* mvc = (MasterViewController*)self.popover.delegate;
+                [mvc.dataTable reloadData];
+            } else {
+                DetailViewController* dvc = (DetailViewController*)self.popover.delegate;
+                dvc.detailItem = self.task;
+                [dvc.dataTable reloadData];
+            }
             [self.popover dismissPopoverAnimated:YES];
         } else {
             [self dismissModalViewControllerAnimated:YES];
