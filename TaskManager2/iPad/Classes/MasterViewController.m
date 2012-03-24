@@ -138,14 +138,14 @@
             taskAddView.parentId = self.taskDataSource.parentId;
             taskAddView.parentSystemId = self.taskDataSource.parentSystemId;
  
-            UINavigationController* navBar = [[UINavigationController alloc] initWithRootViewController:taskAddView];
+            UINavigationController* navBar = [[[UINavigationController alloc] initWithRootViewController:taskAddView] autorelease];
             navBar.view.frame = taskAddView.view.frame;
             navBar.navigationBar.hidden = TRUE;
             uvc = navBar;
         } else {
             tagAddView = [[[TagsAddViewController alloc] initWithNibName:@"TagsAddViewController" bundle:nil] autorelease];
             
-            UINavigationController* navBar = [[UINavigationController alloc] initWithRootViewController:tagAddView];
+            UINavigationController* navBar = [[[UINavigationController alloc] initWithRootViewController:tagAddView] autorelease];
             navBar.view.frame = tagAddView.view.frame;
             navBar.navigationBar.hidden = TRUE;
             uvc = navBar;
@@ -253,7 +253,7 @@
         tagAddView.prevTag = [self.tagDataSource.tags objectAtIndex:indexPath.row];
 		tagAddView.newTagFlag = NO;
         
-        UINavigationController* navBar = [[UINavigationController alloc] initWithRootViewController:tagAddView];
+        UINavigationController* navBar = [[[UINavigationController alloc] initWithRootViewController:tagAddView] autorelease];
         navBar.view.frame = tagAddView.view.frame;
         navBar.navigationBar.hidden = TRUE;
     

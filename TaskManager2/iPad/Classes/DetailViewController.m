@@ -135,7 +135,7 @@
         taskAddView.parentId = task.parentId;
         taskAddView.parentSystemId = task.parentSystemId;
             
-        UINavigationController* navBar = [[UINavigationController alloc] initWithRootViewController:taskAddView];
+        UINavigationController* navBar = [[[UINavigationController alloc] initWithRootViewController:taskAddView] autorelease];
         navBar.view.frame = taskAddView.view.frame;
         navBar.navigationBar.hidden = TRUE;
         
