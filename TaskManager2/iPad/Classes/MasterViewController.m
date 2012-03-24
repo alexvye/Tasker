@@ -14,12 +14,6 @@
 #import "Task.h"
 #import "TaskDAO.h"
 
-//@interface MasterViewController () {
-//    BOOL first;
-//}
-//
-//@end
-
 @implementation MasterViewController
 @synthesize detailViewController = _detailViewController;
 @synthesize typeSelect = _typeSelect;
@@ -55,8 +49,6 @@
         
         self.title = NSLocalizedString(@"Tasks", @"Tasks");
         self.contentSizeForViewInPopover = CGSizeMake(320.0, 600.0);
-        
-//        first = YES;
     }
     return self;
 }
@@ -100,20 +92,12 @@
 
     UIBarButtonItem *addButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)] autorelease];
     self.navigationItem.rightBarButtonItem = addButton;
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
     
-//    [self.taskDataSource loadState];
-//    if (first) {
-//        first = NO;
-//    } else {
-//        [self.detailViewController setDetailItem:self.selectedTask];
-//        if (self.typeSelect.segmentedControlStyle == 0) {
-//            [self.dataTable reloadData];
-//        }
-//    }
+    NSArray* segItems = [[[NSArray alloc] initWithObjects:@"Tasks", @"Tags", nil] autorelease];
+    self.typeSelect = [[[UISegmentedControl alloc] initWithItems:segItems] autorelease];
+    [self.typeSelect addTarget:self action:@selector(typeChange:) forControlEvents: UIControlEventValueChanged];
+    self.typeSelect.selectedSegmentIndex = 0;
+    self.dataTable.tableHeaderView = self.typeSelect;
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
