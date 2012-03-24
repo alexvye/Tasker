@@ -14,11 +14,11 @@
 #import "Task.h"
 #import "TaskDAO.h"
 
-@interface MasterViewController () {
-    BOOL first;
-}
-
-@end
+//@interface MasterViewController () {
+//    BOOL first;
+//}
+//
+//@end
 
 @implementation MasterViewController
 @synthesize detailViewController = _detailViewController;
@@ -56,7 +56,7 @@
         self.title = NSLocalizedString(@"Tasks", @"Tasks");
         self.contentSizeForViewInPopover = CGSizeMake(320.0, 600.0);
         
-        first = YES;
+//        first = YES;
     }
     return self;
 }
@@ -94,9 +94,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     self.dataTable.dataSource = self.taskDataSource;
-    [self.taskDataSource loadState];
 
-//    self.navigationItem.leftBarButtonItem = self.editButtonItem;
     NSArray* items = [[[NSArray alloc] initWithObjects:self.filterButton, self.flexible, self.editButton, nil] autorelease];
     [self.toolbar setItems:items];
 
@@ -107,15 +105,15 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    if (first) {
-        first = NO;
-    } else {
-        [self.detailViewController setDetailItem:self.selectedTask];
-        [self.taskDataSource loadState];
-        if (self.typeSelect.segmentedControlStyle == 0) {
-            [self.dataTable reloadData];
-        }
-    }
+//    [self.taskDataSource loadState];
+//    if (first) {
+//        first = NO;
+//    } else {
+//        [self.detailViewController setDetailItem:self.selectedTask];
+//        if (self.typeSelect.segmentedControlStyle == 0) {
+//            [self.dataTable reloadData];
+//        }
+//    }
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

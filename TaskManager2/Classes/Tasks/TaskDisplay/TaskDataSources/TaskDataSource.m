@@ -29,6 +29,12 @@
     if (section == 1 && self.filtered) {
         return @"Filter";
     }
+    if (section == 0 && self.parentId != NO_PARENT && self.parentSystemId != nil) {
+        Task* task = [TaskDAO getTask:self.parentId :self.parentSystemId];
+        if (task != nil) {
+            return task.title;
+        }
+    }
     return nil;
 }
 

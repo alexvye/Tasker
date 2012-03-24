@@ -8,12 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TaskManager2iPadAppDelegate : NSObject<UIApplicationDelegate> {
-    UIWindow* window;
-    UISplitViewController* splitViewController;
-}
+@interface TaskManager2iPadAppDelegate : NSObject<UIApplicationDelegate>
 
-@property(nonatomic, retain) IBOutlet UIWindow* window;
-@property(nonatomic, retain) IBOutlet UISplitViewController* splitViewController;
+@property(nonatomic, strong) IBOutlet UIWindow* window;
+@property(nonatomic, strong) IBOutlet UISplitViewController* splitViewController;
 
 @end
