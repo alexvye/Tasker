@@ -8,6 +8,12 @@
 
 #import "Task.h"
 
+#define DeviceID @"deviceID"
+
+@interface Task ()
++ (NSString*)getUUID;
+@end
+
 @implementation Task
 @synthesize taskId;
 @synthesize parentId;
@@ -28,7 +34,7 @@
 	if (self != nil) {
 		self.taskId = 0;
 		self.parentId = NO_PARENT;
-		self.systemId = [[UIDevice currentDevice] uniqueIdentifier];
+		self.systemId = [Task getUUID];
 		self.startDate = [NSDate date];
 		self.endDate = [NSDate date];
 		self.recurranceType = NONE;
@@ -70,5 +76,21 @@
 	
 	return copy;
 }
+
+
++ (NSString*)getUUID {
+    NSString* uuidStr = [[NSUserDefaults standardUserDefaults] valueForKey:DeviceID];
+    if (uuidStr == nil) {
+        // Create a unique meeting identifier
+        CFUUIDRef uuid = CFUUIDCreate(NULL);
+        uuidStr = (NSString*)CFUUIDCreateString(NULL, uuid);
+        CFRelease(uuid);
+        [[NSUserDefaults standardUserDefaults] setValue:uuidStr forKey:DeviceID];
+        [[NSUserDefaults standardUserDefaults] synchronize];
+        [uuidStr autorelease];
+    }
+    return uuidStr;
+}
+
 
 @end
