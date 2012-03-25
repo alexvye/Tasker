@@ -162,15 +162,9 @@
     if (self.filterPopover != nil && [self.filterPopover isPopoverVisible]) {
         [self.filterPopover dismissPopoverAnimated:YES];
     } else {
-        NSString* tagFilter = [[NSUserDefaults standardUserDefaults] objectForKey:@"tagFilter"];
-        NSInteger statusFilter = [[NSUserDefaults standardUserDefaults] integerForKey:@"statusFilter"];
-        BOOL startFilter = [[NSUserDefaults standardUserDefaults] boolForKey:@"startedFilter"];
-        
-        if (statusFilter != 0) {
-            statusFilter = statusFilter - 1;
-        } else {
-            statusFilter = 2;
-        }    
+        NSString* tagFilter = [[NSUserDefaults standardUserDefaults] valueForKey:TAG_FILTER];
+        NSInteger statusFilter = [[NSUserDefaults standardUserDefaults] integerForKey:STATUS_FILTER];
+        BOOL startFilter = [[NSUserDefaults standardUserDefaults] boolForKey:STARTED_FILTER];
 
         FilterTasksViewController* ftvc = [[[FilterTasksViewController alloc] initWithNibName:@"FilterTasksViewController" bundle:nil tagFilter:tagFilter statusFilter:statusFilter startFilter:startFilter] autorelease];
         
@@ -259,10 +253,6 @@
 
 #pragma mark - UIPopoverControllerDelegate methods
 - (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController {
-    [self.taskDataSource loadState];
-    if (self.typeSelect.segmentedControlStyle == 0) {
-        [self.dataTable reloadData];
-    }    
 }
 
 @end

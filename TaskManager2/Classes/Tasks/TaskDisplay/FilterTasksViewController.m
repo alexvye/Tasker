@@ -54,16 +54,15 @@
 }
 
 - (IBAction)donePressed:(id)sender {
-    [[NSUserDefaults standardUserDefaults] setObject:self.tagFilter forKey:@"tagFilter"];
-    [[NSUserDefaults standardUserDefaults] setInteger:self.statusFilter+1 forKey:@"statusFilter"];
-    [[NSUserDefaults standardUserDefaults] setBool:self.startedFilter forKey:@"startedFilter"];
+    [[NSUserDefaults standardUserDefaults] setValue:self.tagFilter forKey:TAG_FILTER];
+    [[NSUserDefaults standardUserDefaults] setInteger:self.statusFilter forKey:STATUS_FILTER];
+    [[NSUserDefaults standardUserDefaults] setBool:self.startedFilter forKey:STARTED_FILTER];
     [[NSUserDefaults standardUserDefaults] synchronize];
     
     if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone ) {
         [self dismissModalViewControllerAnimated:YES];
     }  else {
         MasterViewController* mvc = (MasterViewController*)self.popover.delegate;
-        [mvc.taskDataSource loadState];
         [mvc.dataTable reloadData];
         [self.popover dismissPopoverAnimated:YES];
     }
@@ -114,7 +113,7 @@
         } else {
             cell.textLabel.text = @"All";
         }
-        
+
         if (indexPath.row == self.statusFilter) {
             cell.accessoryType = UITableViewCellAccessoryCheckmark;
         } else {
@@ -146,18 +145,14 @@
         }
     }
     
-    if (indexPath.section == 2) {
-        if (indexPath.row < [tags count]) {
-            self.tagFilter = [tags objectAtIndex:indexPath.row];
-        } else {
-            self.tagFilter = nil;
-        }
-    } else  if (indexPath.section == 1)  {
-        self.statusFilter = indexPath.row;
-    } else {
+    if (indexPath.section == 0) {
         self.startedFilter = (indexPath.row == 0);
+    } else if (indexPath.section == 1) {
+            self.statusFilter = indexPath.row;
+    } else {
+        self.tagFilter = (indexPath.row < tags.count) ? [tags objectAtIndex:indexPath.row] : nil;
     }
-    
+
 	return indexPath;
 }
 

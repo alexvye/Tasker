@@ -17,6 +17,7 @@ static NSString* fileName = nil;
 + (NSString*)getDBPath;
 + (NSString*)getDateString:(NSDate*)date;
 + (NSDate*)getDateFromString:(NSString*)date;
++ (NSDate*)getEndOfDay;
 + (int)getNextTaskId:(NSString*)systemId;
 + (Task*)getTaskFromStatement:(sqlite3_stmt*)statement :(int)taskId :(NSString*)systemId;
 
@@ -69,6 +70,18 @@ static NSString* fileName = nil;
 	NSDateFormatter *format = [[[NSDateFormatter alloc] init] autorelease];
 	[format setDateFormat:@"yyyy-MM-dd HH:mm"];	
 	return [format dateFromString:date];
+}
+
+/**
+ * This method is used to return the end of the current date.
+ */
++ (NSDate*)getEndOfDay {
+    NSCalendar *gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+    NSDateComponents *comp = [gregorian components:  (NSYearCalendarUnit | NSMonthCalendarUnit |  NSDayCalendarUnit) fromDate:[NSDate date]];
+    [comp setHour:23];
+    [comp setMinute:59];
+    [comp setSecond:59];
+    return [gregorian dateFromComponents:comp];
 }
 
 /** 
@@ -234,7 +247,7 @@ static NSString* fileName = nil;
         [sql appendString:@"AND task.status_id = ? "];
     }
     if (startedFilter) {
-        [sql appendString:@"AND date('now') > task.start_date "];
+        [sql appendString:@"AND task.start_date <= ? "];
     }
 	[sql appendString:@"ORDER BY task.priority_id "];
 	if (sqlite3_prepare_v2(database, [sql UTF8String], -1, &statement, nil) != SQLITE_OK) {
@@ -251,6 +264,9 @@ static NSString* fileName = nil;
     }
     if (statusFilter != 2) {
         sqlite3_bind_int(statement, idx++, statusFilter);
+    }
+    if (startedFilter) {
+		sqlite3_bind_text(statement, idx++, [[TaskDAO getDateString:[TaskDAO getEndOfDay]] UTF8String], -1, SQLITE_TRANSIENT);
     }
     
     Task* task = nil;
@@ -296,7 +312,7 @@ static NSString* fileName = nil;
         [sql appendString:@"AND task.status_id = ? "];
     }
     if (startedFilter) {
-        [sql appendString:@"AND date('now') > task.start_date "];
+        [sql appendString:@"AND task.start_date <= ? "];
     }
 	[sql appendString:@"ORDER BY task.priority_id "];
 	if (sqlite3_prepare_v2(database, [sql UTF8String], -1, &statement, nil) != SQLITE_OK) {
@@ -314,7 +330,10 @@ static NSString* fileName = nil;
     if (statusFilter != 2) {
         sqlite3_bind_int(statement, idx++, statusFilter);
     }
-    
+    if (startedFilter) {
+		sqlite3_bind_text(statement, idx++, [[TaskDAO getDateString:[TaskDAO getEndOfDay]] UTF8String], -1, SQLITE_TRANSIENT);
+    }
+   
     int count = 0;
     if (sqlite3_step(statement) == SQLITE_ROW) {
         count= sqlite3_column_int(statement, 0);

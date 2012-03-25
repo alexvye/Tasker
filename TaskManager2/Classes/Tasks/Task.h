@@ -9,6 +9,9 @@
 #import <Foundation/Foundation.h>
 
 #define NO_PARENT   -1
+#define STARTED_FILTER  @"startedFilter"
+#define STATUS_FILTER   @"statusFilter"
+#define TAG_FILTER      @"tagFilter"
 
 typedef enum RecurranceType {
 	NONE = 0,

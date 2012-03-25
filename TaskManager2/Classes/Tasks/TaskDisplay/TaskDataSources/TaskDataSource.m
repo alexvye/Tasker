@@ -40,6 +40,7 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    [self loadState];
     self.count = [TaskDAO getFilteredTaskCountForParentId:self.parentId parentSystemId:self.parentSystemId forTag:self.tagFilter status:self.statusFilter andStarted:self.startedFilter];
     self.filtered = self.tagFilter != nil || self.statusFilter != 2 || self.startedFilter;
 
@@ -210,17 +211,9 @@
 #pragma mark - Interface methods
 
 -(void)loadState {
-    NSString* tagFilter = [[NSUserDefaults standardUserDefaults] objectForKey:@"tagFilter"];
-    NSInteger statusCodeFilter = [[NSUserDefaults standardUserDefaults] integerForKey:@"statusFilter"];
-    BOOL startFilter = [[NSUserDefaults standardUserDefaults] boolForKey:@"startedFilter"];
-    
-    self.tagFilter = tagFilter;
-    if (statusCodeFilter != 0) {
-        self.statusFilter = statusCodeFilter - 1;
-    } else {
-        self.statusFilter = 2;
-    }    
-    self.startedFilter = startFilter;
+    self.tagFilter = [[NSUserDefaults standardUserDefaults] valueForKey:@"tagFilter"];
+    self.statusFilter = [[NSUserDefaults standardUserDefaults] integerForKey:@"statusFilter"];
+    self.startedFilter = [[NSUserDefaults standardUserDefaults] boolForKey:@"startedFilter"];
 }
 
 @end
