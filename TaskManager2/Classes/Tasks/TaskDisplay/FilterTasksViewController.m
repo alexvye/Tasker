@@ -75,11 +75,11 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0) {
-        return [self.tags count] + 1;
+        return 2;
     } else if (section == 1) {
         return 3;
     } else {
-        return 2;
+        return self.tags.count + 1;
     }
 }
 
@@ -90,7 +90,7 @@
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuseIdentifier] autorelease];
     }
     
-    if (indexPath.section == 0) {
+    if (indexPath.section == 2) {
         if (indexPath.row < [self.tags count]) {
             cell.textLabel.text = [self.tags objectAtIndex:indexPath.row];
             if ([self.tagFilter isEqualToString:(NSString*)[tags objectAtIndex:indexPath.row]]) {
@@ -146,7 +146,7 @@
         }
     }
     
-    if (indexPath.section == 0) {
+    if (indexPath.section == 2) {
         if (indexPath.row < [tags count]) {
             self.tagFilter = [tags objectAtIndex:indexPath.row];
         } else {
