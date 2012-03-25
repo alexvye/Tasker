@@ -87,7 +87,7 @@
 	// Do any additional setup after loading the view, typically from a nib.
     self.dataTable.dataSource = self.taskDataSource;
 
-    NSArray* items = [[[NSArray alloc] initWithObjects:self.filterButton, self.flexible, self.editButton, nil] autorelease];
+    NSArray* items = [[[NSArray alloc] initWithObjects:self.editButton, self.flexible, self.filterButton, nil] autorelease];
     [self.toolbar setItems:items];
 
     UIBarButtonItem *addButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)] autorelease];
@@ -181,13 +181,13 @@
 
 - (IBAction)editTable:(id)sender {
     [[self dataTable] setEditing:YES animated:YES];
-    NSArray* items = [[[NSArray alloc] initWithObjects:self.filterButton, self.flexible, self.doneButton, nil] autorelease];
+    NSArray* items = [[[NSArray alloc] initWithObjects:self.doneButton, self.flexible, self.filterButton, nil] autorelease];
     [self.toolbar setItems:items];
 }
 
 - (IBAction)editTableDone:(id)sender {
     [[self dataTable] setEditing:NO animated:YES];
-    NSArray* items = [[[NSArray alloc] initWithObjects:self.filterButton, self.flexible, self.editButton, nil] autorelease];
+    NSArray* items = [[[NSArray alloc] initWithObjects:self.editButton, self.flexible, self.filterButton, nil] autorelease];
     [self.toolbar setItems:items];
 }
 
