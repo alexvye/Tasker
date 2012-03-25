@@ -8,6 +8,7 @@
 
 #import "TaskDAO.h"
 #import <sqlite3.h>
+#import "TaskAlarm.h"
 
 static NSString* fileName = nil;
 
@@ -489,6 +490,10 @@ static NSString* fileName = nil;
 	
 	[TaskDAO removeTagsForTask:taskId :systemId];
 	[TaskDAO taskModified:taskId :systemId :YES];
+    TaskAlarm* alarm = [[[TaskAlarm alloc] init] autorelease];
+    alarm.taskId = taskId;
+    alarm.systemId = systemId;
+    [TaskAlarm removeTaskAlarm:alarm];
 }
 
 /**

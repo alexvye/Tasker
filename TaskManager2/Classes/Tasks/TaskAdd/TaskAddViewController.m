@@ -20,6 +20,7 @@
 #import "DataManager.h"
 #import "CommonUI.h"
 #import "TaskDAO.h"
+#import "TaskAlarm.h"
 #import "Task.h"
 #import "TaskManager2iPadAppDelegate.h"
 
@@ -80,6 +81,11 @@
         UILocalNotification* notification = [CommonUI getNotificationForTask:self.task];
         if (notification != nil) {
             self.alarmDate = notification.fireDate;
+        } else {
+            TaskAlarm* alarm = [TaskAlarm getAlarmForTask:self.task];
+            if (alarm != nil) {
+                self.alarmDate = alarm.alarmDate;
+            }
         }
 	}
     [super viewDidLoad];

@@ -9,6 +9,7 @@
 #import "DetailViewController.h"
 #import "TaskAddViewController.h"
 #import "CommonUI.h"
+#import "TaskAlarm.h"
 
 @interface DetailViewController ()
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
@@ -177,7 +178,7 @@
                 height += label.bounds.size.height;
             }
             return height;
-        } else if (indexPath.row == 1 && [CommonUI getNotificationForTask:self.dataSource.task] != nil) {
+        } else if (indexPath.row == 1 && ([CommonUI getNotificationForTask:self.dataSource.task] != nil || [TaskAlarm getAlarmForTask:self.dataSource.task] != nil)) {
             return tableView.rowHeight;
 		} else {
             CGRect frame = self.dataSource.repeatLabel.frame;

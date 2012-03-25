@@ -11,6 +11,7 @@
 #import "TaskAddViewController.h"
 #import "DataManager.h"
 #import "TaskDAO.h"
+#import "TaskAlarm.h"
 #import "CommonUI.h"
 
 
@@ -83,7 +84,7 @@
                 height += label.bounds.size.height;
             }
             return height;
-        } else if (indexPath.row == 1 && [CommonUI getNotificationForTask:self.dataSource.task] != nil) {
+        } else if (indexPath.row == 1 && ([CommonUI getNotificationForTask:self.dataSource.task] != nil || [TaskAlarm getAlarmForTask:self.dataSource.task] != nil)) {
             return tableView.rowHeight;
 		} else {
             CGRect frame = self.dataSource.repeatLabel.frame;

@@ -10,6 +10,7 @@
 #import "TaskManager2iPadAppDelegate.h"
 #import "CommonUI.h"
 #import "TaskDAO.h"
+#import "TaskAlarm.h"
 
 @interface TaskDetailsDataSource ()
 - (int)getNextDayInterval:(int)mask forDate:(NSDate*)date;
@@ -94,6 +95,11 @@
                 
                 if (notification != nil) {
                     notification.fireDate = [self mergeDateWithTime:notification.fireDate andDate:self.task.endDate];
+                } else {
+                    TaskAlarm* alarm = [TaskAlarm getAlarmForTask:self.task];
+                    if (alarm != nil) {
+                        [CommonUI scheduleNotification:[self mergeDateWithTime:alarm.alarmDate andDate:self.task.endDate] forTask:self.task];
+                    }
                 }
                 [self.dataTable reloadData];
             }
@@ -109,6 +115,11 @@
                 [TaskDAO updateTask:self.task];                
                 if (notification != nil) {
                     notification.fireDate = [self mergeDateWithTime:notification.fireDate andDate:self.task.endDate];
+                } else {
+                    TaskAlarm* alarm = [TaskAlarm getAlarmForTask:self.task];
+                    if (alarm != nil) {
+                        [CommonUI scheduleNotification:[self mergeDateWithTime:alarm.alarmDate andDate:self.task.endDate] forTask:self.task];
+                    }
                 }
                 [self.dataTable reloadData];
             }
@@ -126,6 +137,11 @@
                 
                 if (notification != nil) {
                     notification.fireDate = [self mergeDateWithTime:notification.fireDate andDate:self.task.endDate];
+                } else {
+                    TaskAlarm* alarm = [TaskAlarm getAlarmForTask:self.task];
+                    if (alarm != nil) {
+                        [CommonUI scheduleNotification:[self mergeDateWithTime:alarm.alarmDate andDate:self.task.endDate] forTask:self.task];
+                    }
                 }
                 [self.dataTable reloadData];
             }
@@ -266,7 +282,7 @@
         if (self.task != nil && self.task.recurranceType != NONE) {
             rows++;
         }
-        if ([CommonUI getNotificationForTask:self.task] != nil) {
+        if ([CommonUI getNotificationForTask:self.task] != nil || [TaskAlarm getAlarmForTask:self.task]) {
             rows++;
         }
         return rows;
@@ -279,7 +295,8 @@
     
     if (indexPath.section == 0) {
         UILocalNotification* notification = [CommonUI getNotificationForTask:self.task];
-        if (indexPath.row == 1 && notification != nil) {
+        TaskAlarm* alarm = [TaskAlarm getAlarmForTask:self.task];
+        if (indexPath.row == 1 && (notification != nil || alarm != nil)) {
             static NSString *cellIdentifier = @"TaskDetailsAlarm";
             cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
             if (cell == nil) {
@@ -292,7 +309,11 @@
             [timeFormatter setTimeStyle:NSDateFormatterShortStyle];
             
             cell.textLabel.text = @"Alert";
-            cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ", [timeFormatter stringFromDate:notification.fireDate]];
+            if (notification != nil) {
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ", [timeFormatter stringFromDate:notification.fireDate]];
+            } else {
+                cell.detailTextLabel.text = [NSString stringWithFormat:@"%@ ", [timeFormatter stringFromDate:alarm.alarmDate]];
+            }
         } else {
             if (cell == nil) {
                 cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:nil] autorelease];

@@ -7,6 +7,7 @@
 //
 
 #import "CommonUI.h"
+#import "TaskAlarm.h"
 #import "TaskManager2AppDelegate.h"
 
 static NSMutableArray* timers = nil;
@@ -22,23 +23,6 @@ static NSMutableArray* timers = nil;
 	//Set the toolbar to fit the width of the app.
 	[toolbar sizeToFit];
 
-    /*	
-	//Caclulate the height of the toolbar
-	CGFloat toolbarHeight = [toolbar frame].size.height;
-	
-	//Get the bounds of the parent view
-	CGRect rootViewBounds = vc.parentViewController.view.bounds;
-	
-	//Get the width of the parent view,
-	CGFloat rootViewWidth = CGRectGetWidth(rootViewBounds);
-	
-	//Create a rectangle for the toolbar
-	CGRect rectArea = CGRectMake(0, 0, rootViewWidth, toolbarHeight);
-	
-	//Reposition and resize the receiver
-	[toolbar setFrame:rectArea];
-     */
-	
 	//Create a button
 	UIBarButtonItem *cancelButton = [[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel 
 																				   target:vc 
@@ -145,6 +129,13 @@ static NSMutableArray* timers = nil;
     localNotif.soundName = UILocalNotificationDefaultSoundName;
     
 	[[UIApplication sharedApplication] scheduleLocalNotification:localNotif];
+    
+    // Add to alarm list
+    TaskAlarm* alarm = [[[TaskAlarm alloc] init] autorelease];
+    alarm.taskId = task.taskId;
+    alarm.systemId = task.systemId;
+    alarm.alarmDate = date;
+    [TaskAlarm addTaskAlarm:alarm];
 }
 
 +(void)cancelNotificationForTask:(Task*)task {
@@ -152,6 +143,12 @@ static NSMutableArray* timers = nil;
     if (notification != nil) {
         [[UIApplication sharedApplication] cancelLocalNotification:notification];
     }
+    
+    // Add to alarm list
+    TaskAlarm* alarm = [[[TaskAlarm alloc] init] autorelease];
+    alarm.taskId = task.taskId;
+    alarm.systemId = task.systemId;
+    [TaskAlarm removeTaskAlarm:alarm];
 }
 
 +(void)renewAllTimers {
