@@ -8,6 +8,7 @@
 #import "TaskDataSource.h"
 #import "Task.h"
 #import "TaskDAO.h"
+#import "TaskManager2iPadAppDelegate.h"
 
 @implementation TaskDataSource
 @synthesize parentId = _parentId;
@@ -161,7 +162,11 @@
     Task* task = [TaskDAO getFilteredTaskFor:indexPath.row parentId:self.parentId parentSystemId:self.parentSystemId forTag:self.tagFilter status:self.statusFilter andStarted:self.startedFilter];
 	[TaskDAO deleteTask:task.taskId :task.systemId];
     [TaskDAO renumberTaskPriorities:self.parentId :self.parentSystemId];
-	[tableView reloadData]; 
+    
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        TaskManager2iPadAppDelegate* delegate = [[UIApplication sharedApplication] delegate];
+        [delegate updateTables];
+    }
 }
 
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)fromIndexPath toIndexPath:(NSIndexPath *)toIndexPath {

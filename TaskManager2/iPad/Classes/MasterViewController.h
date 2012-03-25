@@ -35,4 +35,6 @@
 - (IBAction)editTable:(id)sender;
 - (IBAction)editTableDone:(id)sender;
 
+- (void)updateDetails;
+
 @end

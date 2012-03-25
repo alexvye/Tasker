@@ -7,6 +7,7 @@
 //
 
 #import "TaskDetailsDataSource.h"
+#import "TaskManager2iPadAppDelegate.h"
 #import "CommonUI.h"
 #import "TaskDAO.h"
 
@@ -134,6 +135,11 @@
         [self updateChildTasks:self.task];
         if (completeSwitch.on && notification != nil) {
             [CommonUI cancelNotificationForTask:self.task];
+        }
+        
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+            TaskManager2iPadAppDelegate* delegate = [[UIApplication sharedApplication] delegate];
+            [delegate updateTables];
         }
    }
     

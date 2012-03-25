@@ -46,6 +46,24 @@
     return YES;
 }
 
+- (void)updateTables {
+    bool first = YES;
+    NSArray* controllers = [self.splitViewController viewControllers];
+    for (UINavigationController* navCtl in controllers) {
+        NSArray* viewControllers = [navCtl viewControllers];
+        for (UIViewController* vc in viewControllers) {
+            if ([vc isKindOfClass:[MasterViewController class]]) {
+                MasterViewController* mvc = (MasterViewController*) vc;
+                [mvc.dataTable reloadData];
+                if (first) {
+                    first = NO;
+                    [mvc updateDetails];
+                }
+            }
+        }
+    }
+}
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

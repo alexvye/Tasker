@@ -21,6 +21,7 @@
 #import "CommonUI.h"
 #import "TaskDAO.h"
 #import "Task.h"
+#import "TaskManager2iPadAppDelegate.h"
 
 @interface TaskAddViewController ()
 
@@ -113,6 +114,11 @@
 		} else {
 			[TaskDAO updateTask:self.task];
             [self updateChildTasks:self.task];
+            
+            if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+                TaskManager2iPadAppDelegate* delegate = [[UIApplication sharedApplication] delegate];
+                [delegate updateTables];
+            }
 		}
         
         if (self.alarmDate != nil) {

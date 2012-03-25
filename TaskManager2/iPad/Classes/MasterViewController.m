@@ -197,6 +197,15 @@
     [self.toolbar setItems:items];
 }
 
+- (void)updateDetails {
+    if (self.detailViewController.dataSource.task != nil) {
+        Task* task = [TaskDAO getTask:self.detailViewController.dataSource.task.taskId :self.detailViewController.dataSource.task.systemId];
+        if (task == nil) {
+            self.detailViewController.detailItem = nil;
+        }
+    }
+}
+
 #pragma mark - UITableViewDelegate methods
 
 - (NSIndexPath *)tableView:(UITableView *)tv willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
