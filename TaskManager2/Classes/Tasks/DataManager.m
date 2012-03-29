@@ -38,4 +38,25 @@
 	[TaskDAO databaseSetup];
 }
 
++(NSDate*)getStartOfDate:(NSDate*)date {
+    NSCalendar *gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+    
+    NSDateComponents *dateComp = [gregorian components:(NSYearCalendarUnit | NSMonthCalendarUnit |  NSDayCalendarUnit) fromDate:date];            
+    [dateComp setHour:0];
+    [dateComp setMinute:0];
+    [dateComp setSecond:0];
+    return [gregorian dateFromComponents:dateComp];    
+}
+
++(NSDate*)getEndOfDate:(NSDate*)date {
+    NSCalendar *gregorian = [[[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar] autorelease];
+    
+    NSDateComponents *dateComp = [gregorian components:(NSYearCalendarUnit | NSMonthCalendarUnit |  NSDayCalendarUnit) fromDate:date];            
+    [dateComp setHour:23];
+    [dateComp setMinute:59];
+    [dateComp setSecond:59];
+    return [gregorian dateFromComponents:dateComp];
+}
+
+
 @end

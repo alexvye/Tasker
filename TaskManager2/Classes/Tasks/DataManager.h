@@ -18,5 +18,8 @@
 +(double)getStatusFromStartDate:(NSDate*)startDate EndDate:(NSDate*)endDate;
 +(void)saveData;
 +(void)loadData;
++(NSDate*)getStartOfDate:(NSDate*)date;
++(NSDate*)getEndOfDate:(NSDate*)date;
+
 
 @end

@@ -9,6 +9,7 @@
 #import "Task.h"
 #import "TaskDAO.h"
 #import "TaskManager2iPadAppDelegate.h"
+#import "DataManager.h"
 
 @implementation TaskDataSource
 @synthesize parentId = _parentId;
@@ -111,18 +112,19 @@
                 if( [[dateComparisonFormatter stringFromDate:task.endDate] isEqualToString:[dateComparisonFormatter stringFromDate:[NSDate date]]]) {
                     UIImage* theImage = [UIImage imageNamed:@"yellow.png"];
                     cell.imageView.image = theImage;
-                } else {                              
-                    NSTimeInterval timeSinceStart = [task.startDate timeIntervalSinceNow];
-                    NSTimeInterval timeSinceEnd = [task.endDate timeIntervalSinceNow];
-                    if (task.status == 1 || timeSinceStart > 0) {
-                        UIImage* theImage = [UIImage imageNamed:@"black.png"];
-                        cell.imageView.image = theImage;
-                    } else if (timeSinceEnd < 0) {
-                        UIImage* theImage = [UIImage imageNamed:@"red.png"];
-                        cell.imageView.image = theImage;
+                } else {  
+                    if (task.status == 0) {
+                        NSDate* start = [DataManager getEndOfDate:[NSDate date]];
+                        NSDate* end = [DataManager getEndOfDate:[NSDate date]];
+                        if ([start timeIntervalSinceDate:[DataManager getStartOfDate:task.startDate]] < 0) {
+                            cell.imageView.image = [UIImage imageNamed:@"black.png"];
+                        } else if ([[DataManager getEndOfDate:task.endDate] timeIntervalSinceDate:end] < 0) {
+                            cell.imageView.image = [UIImage imageNamed:@"red.png"];
+                        } else {
+                            cell.imageView.image = [UIImage imageNamed:@"green.png"];
+                        }
                     } else {
-                        UIImage* theImage = [UIImage imageNamed:@"green.png"];
-                        cell.imageView.image = theImage;
+                        cell.imageView.image = [UIImage imageNamed:@"black.png"];
                     }
                 }
                 

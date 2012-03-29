@@ -202,13 +202,13 @@
 	NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
 	[formatter setDateStyle:NSDateFormatterLongStyle];
     
-    NSString* startDateStr = [NSString stringWithFormat:@"From %@", [formatter stringFromDate:self.task.startDate]];
+    NSString* startDateStr = [NSString stringWithFormat:@"From: %@", [formatter stringFromDate:self.task.startDate]];
     UILabel* startDateLabel = [self getUILabel:startDateStr frame:frame andFont:[UIFont systemFontOfSize:12]];
     startDateLabel.textColor = [UIColor colorWithRed:0.22 green:0.33 blue:0.53 alpha:1.0];
     [labels addObject:startDateLabel];
 	frame.origin.y += startDateLabel.bounds.size.height;
 
-    NSString* endDateStr = [NSString stringWithFormat:@"From %@", [formatter stringFromDate:self.task.endDate]];
+    NSString* endDateStr = [NSString stringWithFormat:@"To: %@", [formatter stringFromDate:self.task.endDate]];
     UILabel* endDateLabel = [self getUILabel:endDateStr frame:frame andFont:[UIFont systemFontOfSize:12]];
     endDateLabel.textColor = [UIColor colorWithRed:0.22 green:0.33 blue:0.53 alpha:1.0];
     [labels addObject:endDateLabel];
