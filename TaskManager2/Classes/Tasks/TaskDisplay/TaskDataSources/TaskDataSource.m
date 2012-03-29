@@ -109,7 +109,7 @@
                 // Display the status color.
                 NSDateFormatter *dateComparisonFormatter = [[[NSDateFormatter alloc] init] autorelease];
                 [dateComparisonFormatter setDateFormat:@"yyyy-MM-dd"];
-                if( [[dateComparisonFormatter stringFromDate:task.endDate] isEqualToString:[dateComparisonFormatter stringFromDate:[NSDate date]]]) {
+                if(task.status == 0 && [[dateComparisonFormatter stringFromDate:task.endDate] isEqualToString:[dateComparisonFormatter stringFromDate:[NSDate date]]]) {
                     UIImage* theImage = [UIImage imageNamed:@"yellow.png"];
                     cell.imageView.image = theImage;
                 } else {  
