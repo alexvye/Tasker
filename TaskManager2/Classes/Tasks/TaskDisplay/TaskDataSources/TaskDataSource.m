@@ -163,14 +163,18 @@
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    Task* task = [TaskDAO getFilteredTaskFor:indexPath.row parentId:self.parentId parentSystemId:self.parentSystemId forTag:self.tagFilter status:self.statusFilter andStarted:self.startedFilter];
-	[TaskDAO deleteTask:task.taskId :task.systemId];
-    [TaskDAO renumberTaskPriorities:self.parentId :self.parentSystemId];
-    [CommonUI cancelNotificationForTask:task];
-    
-    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
-        TaskManager2iPadAppDelegate* delegate = [[UIApplication sharedApplication] delegate];
-        [delegate updateTables];
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        Task* task = [TaskDAO getFilteredTaskFor:indexPath.row parentId:self.parentId parentSystemId:self.parentSystemId forTag:self.tagFilter status:self.statusFilter andStarted:self.startedFilter];
+        [TaskDAO deleteTask:task.taskId :task.systemId];
+        [TaskDAO renumberTaskPriorities:self.parentId :self.parentSystemId];
+        [CommonUI cancelNotificationForTask:task];
+        
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+            TaskManager2iPadAppDelegate* delegate = [[UIApplication sharedApplication] delegate];
+            [delegate updateTables];
+        } else {
+            [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath] withRowAnimation:UITableViewRowAnimationFade]; 
+        }
     }
 }
 
